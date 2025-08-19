@@ -2,6 +2,7 @@
   "name": "ride-split",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@1.1.x",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -18,7 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.539.0",
-    "next": "14.2.22",
+    "next": "14.2.25",
     "prisma": "^6.14.0",
     "react": "^18",
     "react-dom": "^18",
