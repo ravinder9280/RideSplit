@@ -109,3 +109,10 @@ model RideMember {
   @@unique([rideId, userId])
   @@index([userId])
 }
+
+model WebhookEvent {
+  id        String   @id
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

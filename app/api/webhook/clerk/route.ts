@@ -8,11 +8,22 @@ import { Webhook } from 'svix';
 import type { WebhookEvent, UserJSON, DeletedObjectJSON } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
-function primaryEmail(d: Pick<UserJSON, 'email_addresses' | 'primary_email_address_id'>) {
+function primaryEmail(d: Pick<UserJSON, 'email_addresses' | 'primary_email_address_id'>): string | null {
     const arr = (d?.email_addresses ?? []) as Array<{ id: string; email_address: string }>;
     if (!arr.length) return null;
     const pid = d?.primary_email_address_id as string | undefined;
     return arr.find(e => e.id === pid)?.email_address ?? arr[0]?.email_address ?? null;
+}
+
+function isValidEmail(email: string | null): boolean {
+    if (!email) return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function sanitizeString(input: string | null | undefined): string | null {
+    if (!input || typeof input !== 'string') return null;
+    return input.trim() || null;
 }
 
 export async function GET() {
@@ -45,7 +56,7 @@ export async function POST(req: NextRequest) {
             'svix-timestamp': ts,
             'svix-signature': sig,
         }) as WebhookEvent;
-    } catch (e) {
+    } catch {
         return NextResponse.json({ ok: true, persisted: false, error: 'invalid_signature' });
     }
 
@@ -62,11 +73,24 @@ export async function POST(req: NextRequest) {
 
     // CREATE / UPDATE
     if (type === 'user.created' || type === 'user.updated') {
-        const clerkId = (data as UserJSON).id;
-        const email = primaryEmail(data);
-        const firstName = (data as UserJSON).first_name ?? null;
-        const lastName = (data as UserJSON).last_name ?? null;
-        const imageUrl = (data as UserJSON).image_url ?? null;
+        const userData = data as UserJSON;
+
+        // Validate required fields
+        if (!userData.id) {
+            return NextResponse.json({ ok: true, persisted: false, error: 'missing_user_id' });
+        }
+
+        const clerkId = userData.id;
+        const email = primaryEmail(userData);
+        const firstName = sanitizeString(userData.first_name);
+        const lastName = sanitizeString(userData.last_name);
+        const imageUrl = sanitizeString(userData.image_url);
+
+        // Validate email format if provided
+        if (email && !isValidEmail(email)) {
+            return NextResponse.json({ ok: true, persisted: false, error: 'invalid_email_format' });
+        }
+
         const name = [firstName, lastName].filter(Boolean).join(' ') || email || 'User';
 
         try {
@@ -95,23 +119,36 @@ export async function POST(req: NextRequest) {
             });
 
             return NextResponse.json({ ok: true, persisted: true });
-        } catch (e: any) {
+        } catch (error: unknown) {
             // Ack but tell yourself what failed
+            const err = error as { code?: string; meta?: { target?: string }; message?: string };
             return NextResponse.json({
                 ok: true,
                 persisted: false,
-                error: e?.code ? `${e.code}:${e?.meta?.target ?? ''}` : (e?.message ?? 'db_error'),
+                error: err?.code ? `${err.code}:${err?.meta?.target ?? ''}` : (err?.message ?? 'db_error'),
             });
         }
     }
 
     // DELETE
     if (type === 'user.deleted') {
+        const deletedData = data as DeletedObjectJSON;
+
+        // Validate required fields
+        if (!deletedData.id) {
+            return NextResponse.json({ ok: true, persisted: false, error: 'missing_deleted_user_id' });
+        }
+
         try {
-            await prisma.user.deleteMany({ where: { clerkId: (data as DeletedObjectJSON).id } });
+            await prisma.user.deleteMany({ where: { clerkId: deletedData.id } });
             return NextResponse.json({ ok: true, persisted: true });
-        } catch {
-            return NextResponse.json({ ok: true, persisted: false, error: 'db_delete_failed' });
+        } catch (error: unknown) {
+            const err = error as { message?: string };
+            return NextResponse.json({
+                ok: true,
+                persisted: false,
+                error: `db_delete_failed: ${err?.message ?? 'unknown_error'}`
+            });
         }
     }
 
