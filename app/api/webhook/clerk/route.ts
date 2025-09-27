@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
                 });
             });
 
-            return NextResponse.json({ ok: true, persisted: true });
+            return NextResponse.json({ ok: true, persisted: true ,message: 'User created/updated successfully'});
         } catch (error: unknown) {
             // Ack but tell yourself what failed
             const err = error as { code?: string; meta?: { target?: string }; message?: string };

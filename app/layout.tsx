@@ -33,8 +33,10 @@ export default function RootLayout({
       >
         <>
           <Navbar/>
-        {children}
-        </>
+              <main className="mt-[4rem] w-full sm:p-4 md:p-6 lg:p-8 p-2 ">
+
+              {children}
+            </main>        </>
       </body>
     </html>
     </ClerkProvider>
