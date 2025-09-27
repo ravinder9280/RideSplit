@@ -1,7 +1,5 @@
-// If you have a TS path alias "@/lib/*"
-import { PrismaClient } from '@/lib/generated/prisma'
-// Otherwise use a relative path:
-// import { PrismaClient } from '../../lib/generated/prisma'
+// Prefer official client to match current schema
+import { PrismaClient } from '@prisma/client'
 
 const globalForPrisma = global as unknown as { prisma?: PrismaClient }
 

@@ -1,9 +1,29 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+        
+// Enums
 enum RideService {
   UBER
   OLA
 }
 
-enum RideStatus  {
+enum RideStatus {
   ACTIVE
   COMPLETED
   CANCELLED
@@ -16,83 +36,76 @@ enum MemberStatus {
   CANCELLED
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
+// Models
 model User {
-  id          String   @id @default(cuid())
-  clerkId String  @unique
-  email String  @unique
+  id         String  @id @default(cuid())
+  clerkId    String  @unique
+  email      String? @unique
+  phone      String? @unique
+  name       String?
   firstName  String?
   lastName   String?
-  imageUrl String?
-  name        String
-  phone       String?  @unique          // optional but unique when present
-  rating      Float    @default(5)
-  ridesOwned  Ride[]   @relation("OwnerRides")
+  imageUrl   String?
+  rating     Int     @default(5)
+
+  rides      Ride[]  @relation("UserRides")
   memberships RideMember[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
   @@index([clerkId])
 }
 
 model Ride {
-  id             String    @id @default(cuid())
-  ownerId        String
-  owner          User      @relation("OwnerRides", fields: [ownerId], references: [id], onDelete: Cascade)
+  id              String       @id @default(cuid())
+  ownerId         String
+  owner           User         @relation("UserRides", fields: [ownerId], references: [id], onDelete: Cascade)
 
-  service        RideService
-  shareUrlHash   String?   @unique      // dedupe trip links when provided
-  shareUrlEnc    String?                 // encrypted; reveal only to accepted members
+  fromText        String
+  toText          String
+  fromLat         Float
+  fromLng         Float
+  toLat           Float
+  toLng           Float
 
-  fromText       String
-  toText         String
-  fromLat        Float
-  fromLng        Float
-  toLat          Float
-  toLng          Float
-  departureAt    DateTime
+  departureAt     DateTime
+  seatsTotal      Int
+  seatsAvailable  Int
 
-  seatsTotal     Int
-  seatsAvailable Int
+  estTotalFare    Int
+  perSeatPrice    Int
 
-  estTotalFare   Int                     // paise (₹421.99 => 42199)
-  perSeatPrice   Int                     // paise; snapshot for display
+  service         RideService
 
-  isVerified     Boolean   @default(false)
-  status         RideStatus @default(ACTIVE)
+  shareUrlEnc     String?
+  shareUrlHash    String? @unique
 
-  members        RideMember[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  status          RideStatus @default(ACTIVE)
+  isVerified      Boolean    @default(false)
 
-  // indexes for common queries
+  members         RideMember[]
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
   @@index([status, departureAt])
   @@index([ownerId])
-  @@index([departureAt])
   @@index([fromLat, fromLng])
   @@index([toLat, toLng])
 }
 
 model RideMember {
-  id        String       @id @default(cuid())
-  rideId    String
-  ride      Ride         @relation(fields: [rideId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String       @id @default(cuid())
+  rideId     String
+  userId     String
 
-  status    MemberStatus @default(PENDING)
-  fareShare Int                          // paise; snapshot of this member's share
+  ride       Ride         @relation(fields: [rideId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime     @default(now())
+  status     MemberStatus @default(PENDING)
+  fareShare  Int
 
-  @@unique([rideId, userId])            // user can’t join same ride twice
-  @@index([userId, status])             // “my requests” lists
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@unique([rideId, userId])
+  @@index([userId])
 }

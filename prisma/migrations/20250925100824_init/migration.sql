@@ -12,14 +12,12 @@ CREATE TABLE "public"."User" (
     "id" TEXT NOT NULL,
     "clerkId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "phone" TEXT,
+    "name" TEXT,
     "firstName" TEXT,
     "lastName" TEXT,
     "imageUrl" TEXT,
-    "name" TEXT NOT NULL,
-    "phone" TEXT,
-    "rating" DOUBLE PRECISION NOT NULL DEFAULT 5,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "rating" INTEGER NOT NULL DEFAULT 5,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -28,9 +26,6 @@ CREATE TABLE "public"."User" (
 CREATE TABLE "public"."Ride" (
     "id" TEXT NOT NULL,
     "ownerId" TEXT NOT NULL,
-    "service" "public"."RideService" NOT NULL,
-    "shareUrlHash" TEXT,
-    "shareUrlEnc" TEXT,
     "fromText" TEXT NOT NULL,
     "toText" TEXT NOT NULL,
     "fromLat" DOUBLE PRECISION NOT NULL,
@@ -42,8 +37,11 @@ CREATE TABLE "public"."Ride" (
     "seatsAvailable" INTEGER NOT NULL,
     "estTotalFare" INTEGER NOT NULL,
     "perSeatPrice" INTEGER NOT NULL,
-    "isVerified" BOOLEAN NOT NULL DEFAULT false,
+    "service" "public"."RideService" NOT NULL,
+    "shareUrlEnc" TEXT,
+    "shareUrlHash" TEXT,
     "status" "public"."RideStatus" NOT NULL DEFAULT 'ACTIVE',
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -58,6 +56,7 @@ CREATE TABLE "public"."RideMember" (
     "status" "public"."MemberStatus" NOT NULL DEFAULT 'PENDING',
     "fareShare" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "RideMember_pkey" PRIMARY KEY ("id")
 );
@@ -84,16 +83,13 @@ CREATE INDEX "Ride_status_departureAt_idx" ON "public"."Ride"("status", "departu
 CREATE INDEX "Ride_ownerId_idx" ON "public"."Ride"("ownerId");
 
 -- CreateIndex
-CREATE INDEX "Ride_departureAt_idx" ON "public"."Ride"("departureAt");
-
--- CreateIndex
 CREATE INDEX "Ride_fromLat_fromLng_idx" ON "public"."Ride"("fromLat", "fromLng");
 
 -- CreateIndex
 CREATE INDEX "Ride_toLat_toLng_idx" ON "public"."Ride"("toLat", "toLng");
 
 -- CreateIndex
-CREATE INDEX "RideMember_userId_status_idx" ON "public"."RideMember"("userId", "status");
+CREATE INDEX "RideMember_userId_idx" ON "public"."RideMember"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "RideMember_rideId_userId_key" ON "public"."RideMember"("rideId", "userId");

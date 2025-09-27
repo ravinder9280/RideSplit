@@ -1,18 +1,40 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-const isPublicRoute = createRouteMatcher(['/sign-in(.*)','/'])
+const isPublicRoute = createRouteMatcher([
+    '/', '/how-it-works', '/safety',
+    '/sign-in(.*)', '/sign-up(.*)',
+    '/api/webhook/clerk(.*)', // allow webhooks
+    '/api/healthz(.*)',       // optional health check
+]);
+
+const isOnboardingRoute = createRouteMatcher(['/onboarding(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-    if (!isPublicRoute(req)) {
-        await auth.protect()
+    // Skip protection for public routes
+    if (isPublicRoute(req)) return;
+
+    // Protect everything else
+    const { userId, sessionClaims } = auth();
+
+    // If not signed in, Clerk will handle redirect automatically
+    if (!userId) return;
+
+    // Read our lightweight flag from the session token (publicMetadata)
+    // NOTE: Your JWT template includes 'publicMetadata' by default in Clerk Next.js
+    const onboarded =
+        (sessionClaims?.publicMetadata as Record<string, unknown> | undefined)?.onboarded === true;
+
+    // Don't loop if we're already on /onboarding
+    if (!onboarded && !isOnboardingRoute(req)) {
+        const url = new URL('/onboarding', req.url);
+        return Response.redirect(url, 307);
     }
-})
+});
 
 export const config = {
     matcher: [
-        // Skip Next.js internals and all static files, unless found in search params
-        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-        // Always run for API routes
+        // Run on all routes except Next internals & static assets
+        '/((?!_next|.*\\.(?:js|css|png|jpg|jpeg|gif|svg|ico|txt|json|webmanifest|map)).*)',
         '/(api|trpc)(.*)',
     ],
-}
+};
