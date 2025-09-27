@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import type { NextRequest } from 'next/server';
 
 const isPublicRoute = createRouteMatcher([
     '/', '/how-it-works', '/safety',
@@ -9,20 +10,20 @@ const isPublicRoute = createRouteMatcher([
 
 const isOnboardingRoute = createRouteMatcher(['/onboarding(.*)']);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req: NextRequest) => {
     // Skip protection for public routes
     if (isPublicRoute(req)) return;
 
     // Protect everything else
-    const { userId, sessionClaims } = auth();
+    const { userId, sessionClaims } = await auth();
 
     // If not signed in, Clerk will handle redirect automatically
     if (!userId) return;
 
     // Read our lightweight flag from the session token (publicMetadata)
     // NOTE: Your JWT template includes 'publicMetadata' by default in Clerk Next.js
-    const onboarded =
-        (sessionClaims?.publicMetadata as Record<string, unknown> | undefined)?.onboarded === true;
+    const publicMetadata = sessionClaims?.publicMetadata as Record<string, unknown> | undefined;
+    const onboarded = publicMetadata?.onboarded === true;
 
     // Don't loop if we're already on /onboarding
     if (!onboarded && !isOnboardingRoute(req)) {
