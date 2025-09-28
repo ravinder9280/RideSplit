@@ -10,7 +10,9 @@ import {
     NavigationMenuList,
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
+import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@clerk/nextjs'
+import { cn } from '@/lib/utils'
 
 export const NavItems = [
     { label: "Home", href: "/" },
@@ -36,8 +38,9 @@ const userButtonAppearance = {
 
 const Navbar = () => {
     const { user } = useUser()
+  const pathname = usePathname()    
   return (
-      <header className='fixed top-0 left-0 right-0 z-[999] transition-all duration-300 bg-dark/80 border-b shadow-md backdrop-blur-sm'>
+      <header className='fixed top-0 left-0 right-0 z-[999] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
           <div className='w-full sm:px-6 md:px-16 lg:px-28 px-4'>
               <div className='flex items-center h-16'>
                   <div className='flex-1 flex items-center'>
@@ -63,7 +66,7 @@ const Navbar = () => {
                                                       
                                                   {
                                                           item.children.map((i, id) => (
-                                                              <Button variant={'ghost'} className='justify-start' key={id} asChild>
+                                                              <Button variant={'ghost'} className={'justify-start'} key={id} asChild>
                                                                   
                                                           
                                                                   <Link href={i.href || ''}><i.icon  />{" "}{i.label}</Link>
@@ -81,7 +84,7 @@ const Navbar = () => {
                                       </NavigationMenuList>
                                   </NavigationMenu>
                               ):
-                                  <Button variant={'ghost'} key={idx} className='text-[16px]  border-primary shadow-none hover:bg-transparent hover:border-b rounded-none transition-colors duration-300' asChild>
+                                  <Button variant={'ghost'} key={idx} className={cn(pathname === item.href && 'border-b', 'text-[16px]  border-primary shadow-none hover:bg-transparent hover:border-b rounded-none transition-colors duration-300)')} asChild>
                                   <Link href={item.href||''} >
                                   {item.label}
                                   </Link>

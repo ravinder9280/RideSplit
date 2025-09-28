@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from '@clerk/themes'
+import { Toaster, } from 'sonner'
+
 const outfit = Outfit({
   subsets: ['latin'],
   variable: '--font-outfit',
@@ -12,8 +14,8 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: "Ride Split",
-  description: "Ride Split is a platform for splitting rides",
+  title: "Ride Plus",
+  description: "Ride Plus is a platform for splitting rides",
 };
 
 export default function RootLayout({
@@ -22,6 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+
+
     <ClerkProvider appearance={{
       baseTheme:dark
     }}>
@@ -30,8 +34,9 @@ export default function RootLayout({
       <link rel="icon"  href="/logo.png" type="image/jpg"  sizes="any" />
       <body
         className={`${outfit.variable} antialiased dark`}
-      >
-        <>
+        >
+          <>
+            <Toaster closeButton position="top-right" richColors={true} />
           <Navbar/>
               <main className="mt-[4rem] w-full sm:p-4 md:p-6 lg:p-8 p-2 ">
 
