@@ -3,7 +3,7 @@ import RideActionForm from "@/components/ride/rideActionForm";
 
 export default function PublishRidePage() {
     return (
-        <main className="min-h-screen p-8">
+        <main className="min-h-screen p-1  sm:p-2 md:p-4 lg:p-6 ">
             {/* Header / hero */}
             <div className="text-center flex items-center justify-center mb-10">
                 <div className="max-w-2xl">
@@ -15,7 +15,7 @@ export default function PublishRidePage() {
             </div>
 
             {/* Two-column layout */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-1  md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 {/* Left: Why Share */}
                 <section className="bg-muted shadow rounded-xl p-6 space-y-4">
                     <h2 className="text-xl font-semibold">Why Share Your Ride?</h2>
