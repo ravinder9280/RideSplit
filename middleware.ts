@@ -7,6 +7,7 @@ const isPublicRoute = createRouteMatcher([
     '/onboarding(.*)',           // <- add this
     '/api/webhook/clerk(.*)', // allow webhooks
     '/api/healthz(.*)',       // optional health check
+    "/api/rides/search(.*)",     // <-- make search public
 ]);
 
 const isOnboardingRoute = createRouteMatcher(['/onboarding(.*)']);
