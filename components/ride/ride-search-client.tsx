@@ -5,6 +5,7 @@ import MapboxAutocomplete from "../location/autocomplete";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Search } from "lucide-react";
 
 export default function RideSearchClient({ initialQuery }: { initialQuery: Record<string, any> }) {
     const router = useRouter();
@@ -59,8 +60,8 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
             <div className="rounded-xl w-full lg:max-w-7xl  bg-secondary p-4">
                 <div className="mb-4 space-y-1">
 
-                    <h2 className="text-2xl text-primary/80 font-semibold md:text-4xl">Find a Ride</h2>
-                    <p className="text-muted-foreground">Discover Rides All Over the World. </p>
+                    <h2 className="text-xl text-primary/80 font-semibold md:text-4xl">Find a Ride</h2>
+                    <p className="text-sm md:text-base text-muted-foreground">Discover Rides All Over the World. </p>
                 </div>
 
             <div className="grid gap-3 md:grid-cols-2">
@@ -93,7 +94,12 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
             </div>
 
             <div  className="mt-4 flex items-center justify-end gap-3">
-                    <Button className="md:w-1/2 md:max-w-[300px] " size={"lg"} onClick={submit} disabled={pending}>Search</Button>
+                    <Button className="md:w-1/2 md:max-w-[300px] " size={"lg"} onClick={submit} disabled={pending}>
+                        <Search className="w-4 h-4" />
+                        <span>
+                        Search
+                        </span>
+                    </Button>
             </div>
         </div>
         </div>

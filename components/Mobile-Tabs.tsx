@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 const MobileTabs = () => {
   return (
-      <div className='space-y-4'>
+      <div className='space-y-4 md:hidden mt-6'>
           <h2 className='text-xl text-primary/80 font-bold'>Suggestions</h2>
           <div className='flex items-center justify-between gap-4'>
               {NavItems[3].children?.map((item, idx) => (

@@ -23,7 +23,7 @@ export const NavItems = [
         children: [
             { label: "Explore Rides", href: "/rides", icon: Search,image: '/car-check.png' },
             { label: "Post a Ride", href: "/ride/new", icon: Plus, cta: true,image:'/car-plus.png' },
-            { label: "My Rides", href: "/rides", icon: Car,image:'/car.png' },
+            { label: "My Rides", href: "/rides", icon: Car,image:'/phone-car.png' },
         ],
     },
 
@@ -44,7 +44,7 @@ const Navbar = () => {
               <div className='flex items-center h-16'>
                   <div className='flex-1 flex items-center'>
                       <Link href={'/'} className='text-foreground font-poppins font-bold text-2xl flex items-center cursor-pointer'>
-                          RideSplit
+                          RidePlus
                           
                       </Link>
                       

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { headers } from "next/headers";
 import ClearFiltersButton from "../common/ClearFiltersButton";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 export default async function RideList({
     searchParams,
@@ -90,7 +92,7 @@ export default async function RideList({
                             </p>
                         </div>
                         <span className="rounded bg-primary/5 px-2 py-1 text-sm  text-primary font-medium">
-                            ₹{Math.round(r.perSeatPrice / 100)}
+                            ₹{r.perSeatPrice }
                         </span>
                     </div>
 
@@ -112,16 +114,27 @@ export default async function RideList({
                     </div>
                     <div className="flex  items-center justify-between">
                         
-                    <div className="mt-4 flex items-center justify-center gap-2">
-                        <a href={`/ride/${r.id}`} className="rounded-md border px-3 py-1.5 text-sm">
+                        <div className="mt-4 flex items-center justify-center gap-2">
+                            <Button  asChild>
+
+                        <Link href={`/ride/${r.id}`} >
                             View
-                        </a>
-                        <a
+                        </Link>
+                            </Button>
+                        {/* <a
                             href={`/ride/${r.id}#request`}
                             className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground"
                             >
                             Request seat
-                        </a>
+                        </a> */}
+                            <Button variant={"outline"} asChild>
+                                <Link
+                                    href={`/ride/${r.id}#request`}
+
+                                >
+                                Request Seat
+                                </Link>
+                            </Button>
                         </div>
                         <div className="text-muted-foreground text-sm">Seats left: {r.seatsAvailable}</div>
 

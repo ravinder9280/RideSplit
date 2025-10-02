@@ -14,8 +14,8 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
-  title: "Ride Plus",
-  description: "Ride Plus is a platform for splitting rides",
+  title: "RidePlus",
+  description: "Ride Plus is a platform for splitting rides Fares",
 };
 
 export default function RootLayout({
