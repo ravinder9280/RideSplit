@@ -68,11 +68,12 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
                 <MapboxAutocomplete  placeholder="Destination"label="To" namePrefix="to" />
             </div>
 
-            <div className="mt-3 grid gap-3 md:grid-cols-3">
-                <div>
+            <div className="mt-3 grid gap-3 grid-cols-2 md:grid-cols-3">
+                <div className="col-span-3 md:col-span-1">
                     <label className="block text-sm font-medium mb-1">Date</label>
                     <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                </div>
+                    </div>
+                    
                 <div>
                     <label className="block text-sm font-medium mb-1">Time window</label>
                     <Select  value={windowV} onValueChange={setWindowV}>

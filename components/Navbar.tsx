@@ -21,10 +21,9 @@ export const NavItems = [
     {
         label: "Rides",
         children: [
-            { label: "Search Rides", href: "/rides", icon: Search },
-            { label: "Post a Ride", href: "/ride/new", icon: Plus, cta: true },
-            { label: "My Rides", href: "/rides", icon: Car },
-            { label: "Requests", href: "/requests", icon: Inbox},
+            { label: "Explore Rides", href: "/rides", icon: Search,image: '/car-check.png' },
+            { label: "Post a Ride", href: "/ride/new", icon: Plus, cta: true,image:'/car-plus.png' },
+            { label: "My Rides", href: "/rides", icon: Car,image:'/car.png' },
         ],
     },
 
