@@ -10,7 +10,7 @@ export default async function RidesPage({
 }) {
     // pass-through; client will control URL updates
     return (
-        <main className="min-h-screen p-6">
+        <main className="min-h-screen ">
             <RideSearchClient initialQuery={searchParams} />
             <section className="mt-6">
                 <Suspense fallback={<ListSkeleton />}>
