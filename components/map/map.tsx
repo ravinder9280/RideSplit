@@ -196,8 +196,8 @@ export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to =
                     </div>
                     <Separator />
                     <div className='flex justify-between w-full items-center'>
-                        <Button className='text-xl' size={"lg"}  variant={"outline"}> <Phone/> Contact</Button>
-                        <Button className='text-xl' size={"lg"} >Request ride</Button>
+                        <Button className='' size={"lg"}  variant={"outline"}> <Phone/> Contact</Button>
+                        <Button className='' size={"lg"} >Request ride</Button>
 
                     </div>
                     <Separator />
