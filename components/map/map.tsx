@@ -3,6 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { Card, CardContent, CardHeader } from '../ui/card';
+import Image from 'next/image';
+import { Separator } from '../ui/separator';
+import { Button } from '../ui/button';
+import { Phone } from 'lucide-react';
 
 type Coord = { lng: number; lat: number };
 
@@ -10,12 +15,15 @@ type Props = {
     from?: Coord;
     to?: Coord;
     heightClass?: string;
+    profileImage?: string;
+    perSeatPrice?: string|number;
+    startsAt?: string;
 };
 
 const ROUTE_SOURCE_ID = 'route';
 const ROUTE_LAYER_ID = 'route-line';
 
-export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to = { lat: 28.9, lng: 76.9 }, heightClass = 'h-96' }: Props) {
+export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to = { lat: 28.9, lng: 76.9 }, heightClass = 'h-96' ,profileImage,startsAt,perSeatPrice}: Props) {
     const mapContainerRef = useRef<HTMLDivElement | null>(null);
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const fromMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -145,7 +153,7 @@ export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to =
     }
         const tim = Math.round(time / 60) 
         if (tim >= 60) {
-            return ((tim/60).toFixed(1)+ " hr")
+            return ((tim/60).toFixed(0)+ " hr")
             
         }
         else {
@@ -155,18 +163,66 @@ export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to =
     }
 
     return (
-        <div className='mx-auto max-w-5xl'>
+        <div className='space-y-4'>
            
 
-        <div ref={mapContainerRef} className={`relative w-full ${heightClass} rounded-xl overflow-hidden`} />
-            <h1>
-                Distance:&nbsp;
-                {routeInfo ? `${(routeInfo.distance / 1000).toFixed(1)} km` : '—'}
-            </h1>
-            <p>
-                ETA:&nbsp;
-                {routeInfo ? calculateTime(routeInfo.duration) : '—'}
-            </p>
+        <div ref={mapContainerRef} className={`relative w-full ${heightClass}  overflow-hidden`} />
+
+            <Card>
+                <CardHeader>
+                    Ride Details
+                </CardHeader>
+                <CardContent className='grid gap-4'>
+                    <div className='flex justify-between'>
+                        <div className='flex items-center gap-2'>
+                            <div>
+                                <Image height={20} width={20} className='w-10 rounded-full h-10' alt='' src={profileImage||''}/>
+                            </div>
+                            <div>
+                                <h3 className='font-bold'>Ravinder</h3>
+                                <span className='text-muted-foreground'>⭐ 4.8</span>
+
+                            </div>
+
+                        </div>
+                        <div className='flex flex-col items-center justify-center'>
+                            <span className='text-xs text-muted-foreground'>Per Seat Price</span>
+                            <span className="rounded bg-primary/5 px-2 py-1 text-sm  text-primary font-medium">
+                                ₹{perSeatPrice}
+                            </span>
+                            <span></span>
+                        </div>
+
+                    </div>
+                    <Separator />
+                    <div className='flex justify-between w-full items-center'>
+                        <Button className='text-xl' size={"lg"}  variant={"outline"}> <Phone/> Contact</Button>
+                        <Button className='text-xl' size={"lg"} >Request ride</Button>
+
+                    </div>
+                    <Separator />
+                    <div className='flex items-center justify-between gap-2'>
+                        <div className='text-center flex flex-col items-center justify-center'>
+                            <span className='text-sm text-muted-foreground'>Distance</span>
+                            <span>                {routeInfo ? `${(routeInfo.distance / 1000).toFixed(1)} km` : '—'}
+</span>
+
+                        </div>
+                        <div className='text-center flex flex-col items-center justify-center'>
+                            <span className='text-sm text-muted-foreground'>Starts At</span>
+                            <span>{startsAt }</span>
+
+                        </div>
+                        <div className='text-center flex flex-col items-center justify-center'>
+                            <span className='text-sm text-muted-foreground'>Duration</span>
+                            <span>                {routeInfo ? calculateTime(routeInfo.duration) : '—'}
+</span>
+
+                        </div>
+
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 }

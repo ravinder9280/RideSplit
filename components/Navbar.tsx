@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search,Plus,Car,Inbox } from 'lucide-react'
+import { Search,Plus,Car} from 'lucide-react'
 import {
     NavigationMenu,
     NavigationMenuContent,
