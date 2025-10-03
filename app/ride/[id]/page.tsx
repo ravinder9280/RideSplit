@@ -24,6 +24,6 @@ export default async function Page({ params }: PageProps) {
     const to = { lat: ride.toLat, lng: ride.toLng }
 
     return (
-        <MapLine from={from} to={to} />
+        <MapLine from={from} to={to} showMarkers />
     )
 }
