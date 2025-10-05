@@ -4,9 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
-
 const optionalNumber = z.preprocess(
-    (v) => (v === "" || v == null ? undefined : v),
+    (v) => (v === '' || v == null ? undefined : v),
     z.coerce.number()
 ).optional();
 
@@ -16,15 +15,15 @@ const qSchema = z.object({
     toLat: optionalNumber,
     toLng: optionalNumber,
     date: z.string().optional(),
-    window: z.enum(["any", "morning", "afternoon", "evening"]).default("any"),
+    window: z.enum(['any', 'morning', 'afternoon', 'evening']).default('any'),
     seats: z.coerce.number().int().min(1).default(1),
-    service: z.enum(["UBER", "OLA"]).optional(),
+    service: z.enum(['UBER', 'OLA']).optional(),
     verifiedOnly: z.coerce.boolean().optional(),
-    sort: z.enum(["time", "price", "distance"]).default("time"),
+    sort: z.enum(['time', 'price', 'distance']).default('time'),
+    radiusKm: z.coerce.number().min(1).max(100).default(10), // 👈 NEW
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(50).default(10),
 });
-
 
 function windowBounds(date?: string, win?: 'any' | 'morning' | 'afternoon' | 'evening') {
     if (!date || win === 'any') return {};
@@ -37,11 +36,22 @@ function windowBounds(date?: string, win?: 'any' | 'morning' | 'afternoon' | 'ev
     return { start, end };
 }
 
-// simple bbox helper (km)
+// coarse bbox (~km)
 function bboxAround(lat: number, lng: number, km: number) {
     const dLat = km / 110.574;
     const dLng = km / (111.320 * Math.cos((lat * Math.PI) / 180));
     return { minLat: lat - dLat, maxLat: lat + dLat, minLng: lng - dLng, maxLng: lng + dLng };
+}
+
+// precise distance (km)
+function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
+    const R = 6371;
+    const dLat = ((bLat - aLat) * Math.PI) / 180;
+    const dLng = ((bLng - aLng) * Math.PI) / 180;
+    const sa = Math.sin(dLat / 2) ** 2 +
+        Math.cos((aLat * Math.PI) / 180) * Math.cos((bLat * Math.PI) / 180) *
+        Math.sin(dLng / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(sa));
 }
 
 export async function GET(req: NextRequest) {
@@ -49,7 +59,12 @@ export async function GET(req: NextRequest) {
     if (!parsed.success) {
         return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
     }
-    const { fromLat, fromLng, toLat, toLng, date, window, seats, service, verifiedOnly, sort, page, pageSize } = parsed.data;
+
+    const {
+        fromLat, fromLng, toLat, toLng, date, window,
+        seats, service, verifiedOnly, sort,
+        radiusKm, page, pageSize,
+    } = parsed.data;
 
     const where: any = {
         status: 'ACTIVE',
@@ -59,7 +74,7 @@ export async function GET(req: NextRequest) {
     // time window
     const { start, end } = windowBounds(date, window);
     if (start && end) where.departureAt = { gte: start, lte: end };
-    else if (date) { // whole day
+    else if (date) {
         const d0 = new Date(`${date}T00:00:00Z`);
         const d1 = new Date(`${date}T23:59:59Z`);
         where.departureAt = { gte: d0, lte: d1 };
@@ -68,30 +83,57 @@ export async function GET(req: NextRequest) {
     if (service) where.service = service;
     if (verifiedOnly) where.isVerified = true;
 
-    // geo (coarse bbox: ~10km radius)
-    const filters: any[] = [];
-    if (fromLat != null && fromLng != null) {
-        const b = bboxAround(fromLat, fromLng, 10);
-        filters.push({ fromLat: { gte: b.minLat, lte: b.maxLat }, fromLng: { gte: b.minLng, lte: b.maxLng } });
-    }
-    if (toLat != null && toLng != null) {
-        const b = bboxAround(toLat, toLng, 10);
-        filters.push({ toLat: { gte: b.minLat, lte: b.maxLat }, toLng: { gte: b.minLng, lte: b.maxLng } });
-    }
-    if (filters.length) where.AND = filters;
+    // geo (coarse bbox to narrow DB scan)
+    const andFilters: any[] = [];
+    const hasFrom = fromLat != null && fromLng != null;
+    const hasTo = toLat != null && toLng != null;
 
-    // sorting
+    if (hasFrom) {
+        const b = bboxAround(fromLat!, fromLng!, radiusKm); // use requested radius
+        andFilters.push({ fromLat: { gte: b.minLat, lte: b.maxLat }, fromLng: { gte: b.minLng, lte: b.maxLng } });
+    }
+    if (hasTo) {
+        const b = bboxAround(toLat!, toLng!, radiusKm);
+        andFilters.push({ toLat: { gte: b.minLat, lte: b.maxLat }, toLng: { gte: b.minLng, lte: b.maxLng } });
+    }
+    if (andFilters.length) where.AND = andFilters;
+
+    // default DB ordering
     let orderBy: any = [{ departureAt: 'asc' }];
     if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
 
     const skip = (page - 1) * pageSize;
-    const [items, total] = await Promise.all([
+
+    // Pull a page from DB (already narrowed by bbox/time/filters)
+    const [rawItems, totalDb] = await Promise.all([
         prisma.ride.findMany({
-            where, orderBy, skip, take: pageSize,
+            where,
+            orderBy,
+            skip,
+            take: pageSize,
             include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
         }),
         prisma.ride.count({ where }),
     ]);
+
+    // If we have coords, compute precise distance, optionally filter and sort
+    let items = rawItems as any[];
+    if (hasFrom) {
+        items = items
+            .map((r) => ({
+                ...r,
+                distanceKm: haversineKm(fromLat!, fromLng!, r.fromLat, r.fromLng),
+            }))
+            // precise radius filter (inside requested km)
+            .filter((r) => r.distanceKm <= radiusKm + 0.001);
+
+        if (sort === 'distance') {
+            items.sort((a, b) => a.distanceKm - b.distanceKm || (a.departureAt as any) - (b.departureAt as any));
+        }
+    }
+
+    // For accuracy, reflect the filtered count if distance filter applied
+    const total = hasFrom ? items.length : totalDb;
 
     return NextResponse.json({
         items,
