@@ -12,9 +12,10 @@ import {
 import { Input } from "../ui/input";
 import { MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Separator } from "../ui/separator";
 
 export type Props = {
-  label: string;
+  label?: string;
   namePrefix: "from" | "to";
   placeholder?: string;
   required?: boolean;
@@ -124,7 +125,7 @@ export default function MapboxAutocomplete({
           className="mt-1 w-full"
         />
         {showList && (
-          <CommandList className="max-h-64">
+          <CommandList className="max-h-screen">
             {loading &&query.length>0&& (
               <div className="py-3 text-sm text-muted-foreground text-center">Searching…</div>
             )}
@@ -138,9 +139,12 @@ export default function MapboxAutocomplete({
                 {items.length > 0 && (
                   <CommandGroup  >
                     {items.map((s) => (
-                      <CommandItem key={s.id} value={s.text} onSelect={() => choose(s)}>
-                        <MapPin className="mr-2 h-4 w-4" />
-                        <span className="truncate">{s.text}</span>
+                      <CommandItem className="p-4 text-muted-foreground" key={s.id} value={s.text} onSelect={() => choose(s)} asChild>
+                       
+                        <div className="text-wrap">
+                          
+                          {s.text}
+                        </div>
                       </CommandItem>
                     ))}
                   </CommandGroup>

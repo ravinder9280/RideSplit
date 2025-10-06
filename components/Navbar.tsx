@@ -39,7 +39,7 @@ const Navbar = () => {
     const { user } = useUser()
   const pathname = usePathname()    
   return (
-      <header className='fixed top-0 left-0 right-0 z-[999] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
+      <header className='fixed top-0 left-0 right-0 z-[998] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
           <div className='w-full sm:px-6 md:px-16 lg:px-28 px-4'>
               <div className='flex items-center h-16'>
                   <div className='flex-1 flex items-center'>

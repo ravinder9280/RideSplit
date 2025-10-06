@@ -3,7 +3,8 @@ import LocationInit from "@/components/location/LocationInit";  // client (asks 
 import AllowLocationBanner from "@/components/common/AllowLocationBanner"; // client
 import MobileTabs from "@/components/Mobile-Tabs";
 import SearchHome from "@/components/common/SearchHome";
-
+import { ListSkeleton } from "@/components/common/ListSkeleton";
+import { Suspense } from "react";
 export default async function HomePage({
   searchParams,
 }: {
@@ -19,21 +20,23 @@ export default async function HomePage({
   const denied = get("loc") === "denied";
 
   return (
-    <main className="max-w-6xl  space-y-6">
+    <main className="max-w-6xl mx-auto  space-y-6">
       {denied && <AllowLocationBanner />}
       <SearchHome/>
       <MobileTabs/>
       <LocationInit />
-    
+      <Suspense fallback={<ListSkeleton/>}>
+        
       {fromLat && fromLng ? (
         <NearRides
-          lat={parseFloat(fromLat)}
-          lng={parseFloat(fromLng)}
-          radiusKm={10}
-          pageSize={6}
+        lat={parseFloat(fromLat)}
+        lng={parseFloat(fromLng)}
+        radiusKm={10}
+        pageSize={6}
         />
       ) : null}
 
+      </Suspense>
      
     </main>
   );
