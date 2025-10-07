@@ -10,7 +10,7 @@ import {
   CommandInput,
 } from "@/components/ui/command";
 import { Input } from "../ui/input";
-import { MapPin } from "lucide-react";
+import { ChevronRight, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Separator } from "../ui/separator";
 
@@ -113,7 +113,7 @@ export default function MapboxAutocomplete({
     <div className={cn("relative", className)}>
       <label className="block text-sm font-medium mb-1">{label}</label>
 
-      <Command shouldFilter={false}>
+      <Command className="space-y-2" shouldFilter={false}>
         <CommandInput
           placeholder={placeholder}
           value={query}
@@ -139,11 +139,14 @@ export default function MapboxAutocomplete({
                 {items.length > 0 && (
                   <CommandGroup  >
                     {items.map((s) => (
-                      <CommandItem className="p-4 text-muted-foreground" key={s.id} value={s.text} onSelect={() => choose(s)} asChild>
+                      <CommandItem className="py-4 text-muted-foreground" key={s.id} value={s.text} onSelect={() => choose(s)} asChild>
                        
-                        <div className="text-wrap">
+                        <div className="flex items-center gap-2 justify-between text-wrap">
                           
+                          <span>
                           {s.text}
+                          </span>
+                          <ChevronRight/>
                         </div>
                       </CommandItem>
                     ))}

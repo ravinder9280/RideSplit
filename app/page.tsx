@@ -2,9 +2,10 @@ import NearRides from "@/components/ride/near-rides"; // server
 import LocationInit from "@/components/location/LocationInit";  // client (asks on mount)
 import AllowLocationBanner from "@/components/common/AllowLocationBanner"; // client
 import MobileTabs from "@/components/Mobile-Tabs";
-import SearchHome from "@/components/common/SearchHome";
 import { ListSkeleton } from "@/components/common/ListSkeleton";
 import { Suspense } from "react";
+import LocationDialogInput from "@/components/common/LocationDialogInput";
+import LocationNavigator from "@/components/common/LoacationNavigator";
 export default async function HomePage({
   searchParams,
 }: {
@@ -22,8 +23,8 @@ export default async function HomePage({
   return (
     <main className="max-w-6xl mx-auto  space-y-6">
       {denied && <AllowLocationBanner />}
-      <SearchHome/>
-      <MobileTabs/>
+     <LocationNavigator/>
+      <MobileTabs />
       <LocationInit />
       <Suspense fallback={<ListSkeleton/>}>
         

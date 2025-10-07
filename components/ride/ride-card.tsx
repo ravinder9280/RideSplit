@@ -17,7 +17,7 @@ export default function RideCard({ r }: { r: Ride }) {
                 </div>
                 <div className="flex flex-col items-center gap-1 justify-center">
 
-                <span className='text-xs text-muted-foreground'>Per Seat Price</span>
+                <span className='text-[10px] text-center text-nowrap text-muted-foreground'>Per Seat Price</span>
                 <span className="rounded bg-primary/5 px-2 py-1 text-sm  text-primary font-medium">
                     ₹{r.perSeatPrice}
                 </span>

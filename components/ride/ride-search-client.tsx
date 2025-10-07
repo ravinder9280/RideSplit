@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Search } from "lucide-react";
+import LocationDialogInput from "../common/LocationDialogInput";
 
 export default function RideSearchClient({ initialQuery }: { initialQuery: Record<string, any> }) {
     const router = useRouter();
@@ -65,14 +66,19 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
                 </div>
 
             <div className="grid gap-3 md:grid-cols-2">
-                <MapboxAutocomplete placeholder="Starting" label="From" namePrefix="from" />
-                <MapboxAutocomplete  placeholder="Destination"label="To" namePrefix="to" />
+                    <LocationDialogInput
+                        namePrefix="from"
+                        placeholder="Leaving From"
+                    />              
+                    <LocationDialogInput
+                        namePrefix="from"
+                        placeholder="Going To"
+                    />                
             </div>
 
             <div className="mt-3 grid gap-3 grid-cols-2 md:grid-cols-3">
                 <div className="col-span-3 md:col-span-1">
-                    <label className="block text-sm font-medium mb-1">Date</label>
-                    <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                    <Input type="date" className="text-muted-foreground" value={date} onChange={(e) => setDate(e.target.value)} />
                     </div>
                     
                 <div>
