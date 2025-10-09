@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
     }
     if (andFilters.length) where.AND = andFilters;
 
-    // default DB ordering
+    // default DB ordering of
     let orderBy: any = [{ departureAt: 'asc' }];
     if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
 
