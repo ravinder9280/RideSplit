@@ -15,6 +15,7 @@ import { Label } from '../ui/label';
 import RidePin from '../common/RidePin';
 import { requestRide } from '@/actions/rides/request';
 import { SeatSelector } from '../ui/seat-stepper';
+import { toast } from 'sonner';
 
 type Coord = { lng: number; lat: number };
 
@@ -179,6 +180,18 @@ console.log(rideId)
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    async function requestRideWrapper(formData: FormData) {
+        const result = await requestRide(formData);
+        console.log(result); 
+        if (result.ok) {
+            toast.success("Request Sent Successfully")
+        }
+        else {
+            toast.success(result.message)
+
+            
+        }
+    }
 
     // update when props change
     useEffect(() => {
@@ -287,7 +300,7 @@ console.log(rideId)
 
                                             </div>
                                     </DialogHeader>
-                                    <form action={requestRide}>
+                                    <form action={requestRideWrapper}>
 
                                     <div className="grid gap-4">
                                         <div>
