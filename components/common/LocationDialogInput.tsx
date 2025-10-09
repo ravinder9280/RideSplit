@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { MapPin } from "lucide-react";
 import MapboxAutocomplete from "../location/autocomplete";
 
 export default function LocationDialogInput({
-      label,
       namePrefix,
       placeholder,
       required = true,
@@ -28,15 +27,19 @@ export default function LocationDialogInput({
             <div className="relative">
 
                   {/* Fake input that opens dialog */}
+                  <div onClick={() => setOpen(true)} className="flex items-center cursor-pointer justify-between h-12 w-full rounded-md bg-muted/20 gap-2   px-3 py-1 text-base shadow-sm ">
                   <Input
+                        
                         type="text"
-                        readOnly
+                        readOnly={true}
                         value={value}
-                        onClick={() => setOpen(true)}
+                        
                         placeholder={placeholder}
                         required={required}
-                        className="cursor-pointer"
-                  />
+                              className=" bg-transparent p-0 cursor-pointer focus-visible:ring-0 "
+                        />
+                        <MapPin className="text-muted-foreground h-4 w-4"/>
+                        </div>
 
                   {/* Hidden fields for form submit */}
                   <input type="hidden" name={`${namePrefix}Text`} value={value} />

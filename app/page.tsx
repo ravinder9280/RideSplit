@@ -6,6 +6,7 @@ import { ListSkeleton } from "@/components/common/ListSkeleton";
 import { Suspense } from "react";
 import LocationDialogInput from "@/components/common/LocationDialogInput";
 import LocationNavigator from "@/components/common/LoacationNavigator";
+import LatestRides from "@/components/ride/latest-rides";
 export default async function HomePage({
   searchParams,
 }: {
@@ -38,6 +39,13 @@ export default async function HomePage({
       ) : null}
 
       </Suspense>
+      <Suspense fallback={<ListSkeleton/>}>
+        
+       <LatestRides/>
+      
+
+      </Suspense>
+
      
     </main>
   );

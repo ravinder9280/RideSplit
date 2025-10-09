@@ -16,13 +16,19 @@ export default async function Page({ params }: PageProps) {
             fromText: true,
             toText: true,
             perSeatPrice: true,
-            departureAt:true,
+            departureAt: true,
+            status: true,
+            seatsAvailable: true,
+            id:true,
             
             owner: {
                 select: {
                     imageUrl: true,
                     rating: true,
-                    name:true,
+                    name: true,
+                    id: true,
+                    clerkId:true
+                    
                     
                 }
             }
@@ -40,13 +46,18 @@ export default async function Page({ params }: PageProps) {
     return (
         <div className='mx-auto max-w-5xl'>
             
-            <RidePin fromText={ride.fromText} toText={ride.toText} />
+            <RidePin isLineClamp={false} fromText={ride.fromText} toText={ride.toText} />
 
         <MapLine
                 from={from} to={to}
-                profileImage={ride.owner.imageUrl || ''}
+                owner={ride.owner}
+                status={ride.status}
                 startsAt={ride.departureAt.toDateString()||''}
-                perSeatPrice={ride.perSeatPrice|| ''}
+                perSeatPrice={ride.perSeatPrice || ''}
+                fromText={ride.fromText}
+                toText={ride.toText}
+                seatsAvailable={ride.seatsAvailable}
+                rideId={ride.id}
             />
             </div>
     )

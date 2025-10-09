@@ -40,7 +40,7 @@ export default async function NearRides({
     return (
         <section className="space-y-3">
             <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold">Nearby rides</h2>
+                <h2 className="text-lg font-bold">Nearby Rides</h2>
                 {
                     items.length>pageSize?
                     <Button variant="ghost">See all</Button>:null

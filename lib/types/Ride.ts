@@ -6,13 +6,18 @@ export interface Ride {
     toLat: number
     toLng: number
     departureAt: string | Date
-    departureTime: string
     seatsTotal: number
     estTotalFare: number
     perSeatPrice:number
     service: "UBER" | "OLA"
-    owner?: any | null
-    id: number
+    owner?: {
+        
+            imageUrl?: string,
+            rating?: number,
+            name?: string,
+
+        
+    }   , id: number
     seatsAvailable : number
 
 

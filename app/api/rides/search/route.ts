@@ -22,7 +22,7 @@ const qSchema = z.object({
     sort: z.enum(['time', 'price', 'distance']).default('time'),
     radiusKm: z.coerce.number().min(1).max(100).default(10), // 👈 NEW
     page: z.coerce.number().int().min(1).default(1),
-    pageSize: z.coerce.number().int().min(1).max(50).default(10),
+    pageSize: z.coerce.number().int().min(1).max(50).default(50),
 });
 
 function windowBounds(date?: string, win?: 'any' | 'morning' | 'afternoon' | 'evening') {

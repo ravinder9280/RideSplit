@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search,Plus,Car} from 'lucide-react'
+import { Search,Plus,Car, Inbox} from 'lucide-react'
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils'
 export const NavItems = [
     { label: "Home", href: "/" },
     { label: "How it works", href: "/how-it-works" },
-    { label: "Safety", href: "/safety" },
+    { label: "Requests", href: "/requests" },
     {
         label: "Rides",
         children: [
@@ -97,7 +97,16 @@ const Navbar = () => {
                   <div className='flex items-center pl-6 gap-2'>
 
                       {
-                          user ? <UserButton appearance={userButtonAppearance} /> :
+                          user ? <div className='flex items-center  gap-2'>
+                              <Button className='md:hidden' variant={"ghost" } asChild>
+                                  <Link href={'/requests'}>
+                                  <Inbox />
+                                  </Link>
+                              </Button>
+                              
+                              <UserButton appearance={userButtonAppearance} />
+                          </div> 
+                              :
                               <Button  asChild >
                                   <Link href={'/sign-in'}>
 
