@@ -7,12 +7,12 @@ import { z } from "zod";
 
 const idSchema = z.object({ memberId: z.string().min(1) });
 
-export async function cancelMyRequest(formData: FormData) {
+export async function cancelMyRequest(memberID: string) {
     const user = await currentUser();
     const userId = user?.id
     if (!userId) return { ok: false, message: "Not signed in" };
 
-    const parsed = idSchema.safeParse({ memberId: formData.get("memberId") });
+    const parsed = idSchema.safeParse({ memberId: memberID });
     if (!parsed.success) return { ok: false, message: "Invalid input" };
     const { memberId } = parsed.data;
 
