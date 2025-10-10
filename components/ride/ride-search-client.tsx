@@ -1,12 +1,12 @@
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
-import MapboxAutocomplete from "../location/autocomplete";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Search } from "lucide-react";
 import LocationDialogInput from "../common/LocationDialogInput";
+import { Spinner } from "../ui/spinner";
 
 export default function RideSearchClient({ initialQuery }: { initialQuery: Record<string, any> }) {
     const router = useRouter();
@@ -101,10 +101,23 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
 
             <div  className="mt-4 flex items-center justify-end gap-3">
                     <Button className="md:w-1/2 md:max-w-[300px] " size={"lg"} onClick={submit} disabled={pending}>
-                        <Search className="w-4 h-4" />
-                        <span>
-                        Search
-                        </span>
+                        {pending ?
+                             <>
+                            <Spinner />
+                            <span>
+                                    Searching...
+                            </span>
+                               </>
+                                
+                                :
+                                <>
+                                <Search className="w-4 h-4" />
+                                <span>Search</span>
+                                </>
+                            
+
+                        }
+                            
                     </Button>
             </div>
         </div>

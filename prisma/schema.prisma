@@ -14,6 +14,7 @@ datasource db {
 enum RideService {
   UBER
   OLA
+  OWNER
 }
 
 enum RideStatus {
@@ -94,6 +95,7 @@ model RideMember {
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   status     MemberStatus @default(PENDING)
+  seatsRequested Int          @default(1)   
   fareShare  Int
 
   createdAt  DateTime     @default(now())

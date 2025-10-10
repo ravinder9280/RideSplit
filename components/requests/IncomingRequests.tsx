@@ -29,7 +29,7 @@ export default async function IncomingRequests() {
     }
 
     return (
-        <ul className="space-y-3">
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg::grid-cols-3">
             {rows.map((m) => (
                 <li key={m.id} className="rounded-md border p-3 space-y-2 ">
                     <div className="space-y-2">
@@ -47,7 +47,7 @@ export default async function IncomingRequests() {
                         
 
                         <Link href={`/ride/${m.rideId}`}>
-                            <RidePin fromText={m.ride.fromText} toText={m.ride.toText} isLineClamp />
+                            <RidePin fromText={m.ride.fromText} toText={m.ride.toText} lineClamp={1} />
                         
                         </Link>
                         

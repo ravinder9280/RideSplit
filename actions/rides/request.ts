@@ -1,50 +1,60 @@
 "use server";
 
+import {  currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const schema = z.object({
+    rideId: z.string().min(1),
+    seats: z.coerce.number().int().min(1).max(8),
+});
 
 export async function requestRide(formData: FormData) {
-    const user = await currentUser();
-    
-    
-    if (!user) throw new Error("Not authenticated");
+    const clerkUser = await currentUser();
+    const userId=clerkUser?.id
+    if (!userId) return { ok: false, message: "Not signed in" };
 
-    const rideId = formData.get("rideId") as string;
-    const seatsRequested = Number(formData.get("seatsRequested") || 1);
-    console.log(rideId)
-
-    if (!rideId) throw new Error("Missing rideId");
-    if (seatsRequested < 1) throw new Error("Invalid seat request");
-
-    return await prisma.$transaction(async (tx) => {
-        const ride = await tx.ride.findUnique({
-            where: { id: rideId },
-            include: { owner: true },
-        });
-        if (!ride) throw new Error("Ride not found");
-        if (ride.owner.clerkId === user.id) throw new Error("Cannot request own ride");
-        if (ride.status !== "ACTIVE") throw new Error("Ride not active");
-        if (ride.departureAt < new Date()) throw new Error("Ride already departed");
-
-        try {
-            const member = await tx.rideMember.create({
-                data: {
-                    rideId,
-                    userId: (await tx.user.findUniqueOrThrow({ where: { clerkId: user.id } })).id,
-                    status: "PENDING",
-                    fareShare: ride.perSeatPrice * seatsRequested,
-                },
-            });
-            // trigger revalidation if needed
-            revalidatePath(`/ride/${rideId}`);
-            return { ok: true, member };
-        } catch (err: any) {
-            if (err.code === "P2002") {
-                // unique constraint (already requested)
-                return { ok: false, message: "You already requested this ride" };
-            }
-            throw err;
-        }
+    const parsed = schema.safeParse({
+        rideId: formData.get("rideId"),
+        seats: formData.get("seats"),
     });
+    if (!parsed.success) return { ok: false, message: "Invalid input" };
+
+    const { rideId, seats } = parsed.data;
+
+    const ride = await prisma.ride.findUnique({
+        where: { id: rideId },
+        select: {
+            id: true,
+            status: true,
+            perSeatPrice: true,
+            seatsAvailable: true,
+            owner: { select: { clerkId: true } },
+        },
+    });
+    if (!ride) return { ok: false, message: "Ride not found" };
+    if (ride.status !== "ACTIVE") return { ok: false, message: "Ride not active" };
+    if (ride.seatsAvailable < seats) return { ok: false, message: "Not enough seats" };
+    if (ride.owner.clerkId === userId) return { ok: false, message: "Cannot request own ride" };
+
+    const user = await prisma.user.findUnique({ where: { clerkId: userId }, select: { id: true } });
+    if (!user) return { ok: false, message: "User missing in DB" };
+
+    // Upsert: if user already requested this ride, update seatsRequested/fareShare
+    const fareShare = ride.perSeatPrice * seats; // paise total for all seats
+
+    const member = await prisma.rideMember.upsert({
+        where: { rideId_userId: { rideId, userId: user.id } },
+        update: { seatsRequested: seats, fareShare },
+        create: {
+            rideId,
+            userId: user.id,
+            seatsRequested: seats,
+            fareShare,
+            status: "PENDING",
+        },
+    });
+    console.log(member)
+
+    return { ok: true, member };
 }

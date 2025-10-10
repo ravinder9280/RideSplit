@@ -12,7 +12,7 @@ export const rideSchema = z.object({
     departureTime: z.string().min(1),
     seatsTotal: z.coerce.number().int().positive().max(8),
     estTotalFare: z.coerce.number().int().positive(),
-    service: z.enum(["UBER", "OLA"]),
+    service: z.enum(["UBER", "OLA", "OWNER"]),
 });
 
 export type RideInput = z.infer<typeof rideSchema>;

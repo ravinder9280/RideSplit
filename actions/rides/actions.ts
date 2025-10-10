@@ -24,7 +24,8 @@ export async function publishRide(formData: FormData) {
     } = parsed.data;
 
     const departureAt = new Date(`${departureDate}T${departureTime}`);
-
+try {
+    
     await prisma.ride.create({
         data: {
             owner: { connect: { clerkId: userId } },
@@ -38,7 +39,15 @@ export async function publishRide(formData: FormData) {
             service,
         },
     });
-
     revalidatePath("/rides");
     return { ok: true };
+} catch (error: any) {
+    return {
+        ok: false,
+        message:error.message
+    }
+
+    
+}
+
 }

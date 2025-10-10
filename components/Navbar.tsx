@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search,Plus,Car, Inbox} from 'lucide-react'
+import { Search,Plus,Car} from 'lucide-react'
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -13,11 +13,12 @@ import {
 import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
+import NotificationBadge from './common/NotificationBadge'
 
 export const NavItems = [
     { label: "Home", href: "/" },
     { label: "How it works", href: "/how-it-works" },
-    { label: "Requests", href: "/requests" },
+
     {
         label: "Rides",
         children: [
@@ -97,12 +98,11 @@ const Navbar = () => {
                   <div className='flex items-center pl-6 gap-2'>
 
                       {
-                          user ? <div className='flex items-center  gap-2'>
-                              <Button className='md:hidden' variant={"ghost" } asChild>
+                          user ? <div className='flex items-center  gap-4 md:gap-6'>
                                   <Link href={'/requests'}>
-                                  <Inbox />
+                                  <NotificationBadge/>
                                   </Link>
-                              </Button>
+                              
                               
                               <UserButton appearance={userButtonAppearance} />
                           </div> 

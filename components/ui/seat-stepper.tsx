@@ -18,7 +18,7 @@ export function SeatSelector({ min = 1, max = 6 }: { min?: number; max?: number 
             </Button>
             <Input
                 type="number"
-                name="seatsRequested"
+                name="seats"
                 value={seats}
                 readOnly
                 className="w-16 h-16 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none bg-transparent text-2xl md:text-2xl outline-none focus-visible:ring-0 font-bold text-center"

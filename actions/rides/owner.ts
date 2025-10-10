@@ -1,70 +1,69 @@
+// app/actions/requests/owner.ts
 "use server";
 
+import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import {  currentUser } from "@clerk/nextjs/server";
-import { revalidatePath } from "next/cache";
+import { z } from "zod";
 
-export async function acceptRequest(memberId: string) {
-    const user = await currentUser();
-    const userId=user?.id
-    if (!userId) throw new Error("Not authenticated");
+const idSchema = z.object({ memberId: z.string().min(1) });
 
-    return prisma.$transaction(async (tx) => {
-        const member = await tx.rideMember.findUnique({
-            where: { id: memberId },
-            include: { ride: true, user: true },
-        });
-        if (!member) throw new Error("Request not found");
-
-        const ride = await tx.ride.findUnique({ where: { id: member.rideId } });
-        if (!ride) throw new Error("Ride missing");
-        const owner = await tx.user.findUnique({ where: { id: ride.ownerId } });
-        if (!owner || owner.clerkId !== userId) throw new Error("Not your ride");
-
-        if (ride.status !== "ACTIVE") throw new Error("Ride not active");
-        if (ride.departureAt < new Date()) throw new Error("Ride already departed");
-        if (member.status !== "PENDING") throw new Error("Request not pending");
-        if (ride.seatsAvailable < 1) throw new Error("No seats left");
-
-        await tx.ride.update({
-            where: { id: ride.id },
-            data: { seatsAvailable: { decrement: 1 } },
-        });
-        await tx.rideMember.update({
-            where: { id: memberId },
-            data: { status: "ACCEPTED" },
-        });
-
-        revalidatePath(`/ride/${ride.id}`);
-        return { ok: true };
-    });
-}
-
-export async function declineRequest(memberId: string) {
+export async function acceptRequest(memberID: string) {
     const user = await currentUser();
     const userId = user?.id
-    if (!userId) throw new Error("Not authenticated");
+    if (!userId) return { ok: false, message: "Not signed in" };
 
-    return prisma.$transaction(async (tx) => {
-        const member = await tx.rideMember.findUnique({
-            where: { id: memberId },
-            include: { ride: true },
-        });
-        if (!member) throw new Error("Request not found");
+    const parsed = idSchema.safeParse({ memberId: memberID});
+    if (!parsed.success) return { ok: false, message: "Invalid input" };
+    const { memberId } = parsed.data;
 
-        const ride = await tx.ride.findUnique({ where: { id: member.rideId } });
-        if (!ride) throw new Error("Ride missing");
-        const owner = await tx.user.findUnique({ where: { id: ride.ownerId } });
-        if (!owner || owner.clerkId !== userId) throw new Error("Not your ride");
-
-        if (member.status !== "PENDING") throw new Error("Request not pending");
-
-        await tx.rideMember.update({
-            where: { id: memberId },
-            data: { status: "DECLINED" },
-        });
-
-        revalidatePath(`/ride/${ride.id}`);
-        return { ok: true };
+    const member = await prisma.rideMember.findUnique({
+        where: { id: memberId },
+        include: { ride: { include: { owner: true } } },
     });
+    if (!member) return { ok: false, message: "Not found" };
+    if (member.ride.owner.clerkId !== userId) return { ok: false, message: "Not your ride" };
+    if (member.status !== "PENDING") return { ok: false, message: "Not pending" };
+
+    // ensure enough seats still available
+    if (member.ride.seatsAvailable < member.seatsRequested) {
+        return { ok: false, message: "Seats no longer available" };
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+        await tx.ride.update({
+            where: { id: member.rideId },
+            data: { seatsAvailable: { decrement: member.seatsRequested } },
+        });
+        return tx.rideMember.update({
+            where: { id: member.id },
+            data: { status: "ACCEPTED" },
+        });
+    });
+
+    return { ok: true, member: updated };
+}
+
+export async function declineRequest(memberID:string) {
+    const user = await currentUser();
+    const userId = user?.id
+    if (!userId) return { ok: false, message: "Not signed in" };
+
+    const parsed = idSchema.safeParse({ memberId: memberID });
+    if (!parsed.success) return { ok: false, message: "Invalid input" };
+    const { memberId } = parsed.data;
+
+    const member = await prisma.rideMember.findUnique({
+        where: { id: memberId },
+        include: { ride: { include: { owner: true } } },
+    });
+    if (!member) return { ok: false, message: "Not found" };
+    if (member.ride.owner.clerkId !== userId) return { ok: false, message: "Not your ride" };
+    if (member.status !== "PENDING") return { ok: false, message: "Not pending" };
+
+    const updated = await prisma.rideMember.update({
+        where: { id: member.id },
+        data: { status: "DECLINED" },
+    });
+
+    return { ok: true, member: updated };
 }

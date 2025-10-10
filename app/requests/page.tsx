@@ -2,11 +2,13 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import IncomingRequests from "@/components/requests/IncomingRequests";
 import MyRequestsList from "@/components/requests/MyRequestsList";
+import { Separator } from "@/components/ui/separator";
 
 export default async function RequestsHubPage() {
     return (
         <main className="max-w-5xl mx-auto p-6 space-y-6">
             <h1 className="text-xl font-semibold">Requests</h1>
+            <Separator/>
 
             <Tabs defaultValue="incoming" className="space-y-4">
                 <TabsList>

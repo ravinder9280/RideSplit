@@ -271,7 +271,7 @@ console.log(rideId)
 
 
                         <Button disabled={isRequestDisabled} className=''  size={"lg"} >
-                            Request ride <ArrowRight size={40} strokeWidth={1} />
+                            Request ride <ArrowRight size={40}  />
                         </Button>
                             </DialogTrigger>
                             
@@ -306,7 +306,7 @@ console.log(rideId)
                                         <div>
                                             <Badge size='sm' variant='teal-subtle'>Seats Avialable : {seatsAvailable} </Badge>
                                         </div>
-                                            <RidePin isLineClamp={true} fromText={fromText||'Location'} toText={toText||'Location'} />
+                                            <RidePin lineClamp={1} fromText={fromText||'Location'} toText={toText||'Location'} />
                                        
                                         <div  className="grid mt-4 gap-3">
                                             <input type="hidden" name="rideId" value={String(rideId)} />
@@ -318,7 +318,8 @@ console.log(rideId)
                                     <DialogFooter className='mt-4 '>
                                         <DialogClose asChild>
                                             <Button variant="outline">Cancel</Button>
-                                        </DialogClose>
+                                            </DialogClose>
+                                            
                                         <Button type="submit">Sent Request</Button>
                                     </DialogFooter>
                                     </form>
