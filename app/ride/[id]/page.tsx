@@ -46,7 +46,7 @@ export default async function Page({ params }: PageProps) {
     return (
         <div className='mx-auto max-w-5xl'>
             
-            <RidePin lineClamp={2} fromText={ride.fromText} toText={ride.toText} />
+            <RidePin lineClampClass={"line-clamp-2 max-w-xl"} fromText={ride.fromText} toText={ride.toText} />
 
         <MapLine
                 from={from} to={to}

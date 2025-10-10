@@ -47,7 +47,7 @@ export default async function IncomingRequests() {
                         
 
                         <Link href={`/ride/${m.rideId}`}>
-                            <RidePin fromText={m.ride.fromText} toText={m.ride.toText} lineClamp={1} />
+                            <RidePin fromText={m.ride.fromText} toText={m.ride.toText} lineClampClass={"line-clamp-1"} />
                         
                         </Link>
                         

@@ -2,7 +2,7 @@ import React from 'react'
 
 
 
-const RidePin = ({ fromText,toText,lineClamp}: { fromText: string, toText: string ,lineClamp?:number}) => {
+const RidePin = ({ fromText,toText,lineClampClass}: { fromText: string, toText: string ,lineClampClass?:string}) => {
   return (
       <div className="py-2 flex">
           <div className="relative mr-3 flex w-6 flex-col items-center">
@@ -19,12 +19,12 @@ const RidePin = ({ fromText,toText,lineClamp}: { fromText: string, toText: strin
           <div className="flex-1 space-y-4">
               <div>
                   <p className="text-xs text-muted-foreground">Pickup Point</p>
-                  <p className={`text-sm  ${lineClamp?`line-clamp-${lineClamp}`:""} font-medium`}>{fromText}</p>
+                  <p className={`text-sm   ${lineClampClass} font-medium`}>{fromText}</p>
               </div>
 
               <div>
                   <p className="text-xs text-muted-foreground">Dropoff Point</p>
-                  <p className={`text-sm ${lineClamp ? `line-clamp-${lineClamp}` : ""} font-medium`}>{toText}</p>
+                  <p className={`text-sm ${ lineClampClass } font-medium`}>{toText}</p>
               </div>
           </div>
       </div>  )

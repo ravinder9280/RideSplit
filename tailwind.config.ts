@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
+import lineClamp from '@tailwindcss/line-clamp'
 const config: Config = {
 	dropShadow: {
 		glow: "0 0 8px rgba(0, 212, 255, 0.5)",
@@ -108,6 +109,14 @@ const config: Config = {
 			}
 		}
 	},
-	plugins: [animate],
+	safelist: [
+		'line-clamp-1',
+		'line-clamp-2',
+		'line-clamp-3',
+		'line-clamp-4',
+		'line-clamp-5',
+		'line-clamp-6',
+	],
+	plugins: [animate,lineClamp],
 };
 export default config;

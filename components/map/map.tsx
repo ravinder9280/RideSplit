@@ -306,7 +306,7 @@ console.log(rideId)
                                         <div>
                                             <Badge size='sm' variant='teal-subtle'>Seats Avialable : {seatsAvailable} </Badge>
                                         </div>
-                                            <RidePin lineClamp={1} fromText={fromText||'Location'} toText={toText||'Location'} />
+                                            <RidePin lineClampClass={"line-clamp-1"} fromText={fromText||'Location'} toText={toText||'Location'} />
                                        
                                         <div  className="grid mt-4 gap-3">
                                             <input type="hidden" name="rideId" value={String(rideId)} />
