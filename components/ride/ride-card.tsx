@@ -12,7 +12,7 @@ export default function RideCard({ r }: { r: Ride }) {
         >
             <div className="flex items-start h-32 justify-between">
                 <div className="min-h-24">
-                    <RidePin isLineClamp={true} fromText={ r.fromText} toText={r.toText} />
+                    <RidePin lineClamp={2} fromText={ r.fromText} toText={r.toText} />
                     
                 </div>
                 <div className="flex flex-col items-center gap-1 justify-center">

@@ -39,7 +39,7 @@ export default async function MyRequestsList({
                             <Badge variant={m.status=="PENDING"?"amber-subtle":"red-subtle"}
                          size="sm" >{ m.status}</Badge>
                             <div className="font-medium">
-                                <RidePin fromText={ m.ride.fromText} toText={m.ride.toText} isLineClamp />
+                                <RidePin fromText={ m.ride.fromText} toText={m.ride.toText} lineClamp={1} />
                             </div>
                             
                         </div>
