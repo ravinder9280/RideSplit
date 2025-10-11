@@ -5,19 +5,9 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import RideCard from "../ride/ride-card";
+import { Ride } from "@/lib/types/Ride";
 
 type Msg = { role: "user" | "assistant"; content: string };
-
-type Ride = {
-    id: string;
-    fromText: string;
-    toText: string;
-    when: string;
-    service: string;
-    perSeat: number;
-    seatsLeft: number;
-    owner: string;
-};
 
 async function sendChat(url: string, { arg }: { arg: Msg[] }) {
     const res = await fetch(url, {

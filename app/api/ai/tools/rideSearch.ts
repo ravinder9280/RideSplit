@@ -90,12 +90,21 @@ export async function rideSearchTool(input: unknown) {
     return items.map(r => ({
         id: r.id,
         fromText: r.fromText,
+        fromLat: r.fromLat,
+        fromLng: r.fromLng,
         toText: r.toText,
-        when: r.departureAt,
+        toLat: r.toLat,
+        toLng: r.toLng,
+        departureAt: r.departureAt,
+        seatsTotal: r.seatsTotal,
+        estTotalFare: r.estTotalFare,
+        perSeatPrice: r.perSeatPrice,
         service: r.service,
-        perSeat: Math.round(r.perSeatPrice / 100),
-        seatsLeft: r.seatsAvailable,
-        owner: r.owner?.name ?? "Owner",
-        perSeatPrice:r.perSeatPrice
+        owner: {
+            imageUrl: r.owner?.imageUrl,
+            rating: r.owner?.rating,
+            name: r.owner?.name,
+        },
+        seatsAvailable: r.seatsAvailable
     }));
 }

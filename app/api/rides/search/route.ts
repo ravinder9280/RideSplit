@@ -3,6 +3,7 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 const optionalNumber = z.preprocess(
     (v) => (v === '' || v == null ? undefined : v),
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
         radiusKm, page, pageSize,
     } = parsed.data;
 
-    const where: any = {
+    const where: Prisma.RideWhereInput = {
         status: 'ACTIVE',
         seatsAvailable: { gte: seats },
     };
@@ -84,7 +85,7 @@ export async function GET(req: NextRequest) {
     if (verifiedOnly) where.isVerified = true;
 
     // geo (coarse bbox to narrow DB scan)
-    const andFilters: any[] = [];
+    const andFilters: Prisma.RideWhereInput[] = [];
     const hasFrom = fromLat != null && fromLng != null;
     const hasTo = toLat != null && toLng != null;
 
@@ -99,7 +100,7 @@ export async function GET(req: NextRequest) {
     if (andFilters.length) where.AND = andFilters;
 
     // default DB ordering of
-    let orderBy: any = [{ departureAt: 'asc' }];
+    let orderBy: Prisma.RideOrderByWithRelationInput[] = [{ departureAt: 'asc' }];
     if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
 
     const skip = (page - 1) * pageSize;
@@ -117,18 +118,17 @@ export async function GET(req: NextRequest) {
     ]);
 
     // If we have coords, compute precise distance, optionally filter and sort
-    let items = rawItems as any[];
+    let items = rawItems.map((r) => ({
+        ...r,
+        distanceKm: hasFrom ? haversineKm(fromLat!, fromLng!, r.fromLat, r.fromLng) : 0,
+    }));
+
     if (hasFrom) {
-        items = items
-            .map((r) => ({
-                ...r,
-                distanceKm: haversineKm(fromLat!, fromLng!, r.fromLat, r.fromLng),
-            }))
-            // precise radius filter (inside requested km)
-            .filter((r) => r.distanceKm <= radiusKm + 0.001);
+        // precise radius filter (inside requested km)
+        items = items.filter((r) => r.distanceKm <= radiusKm + 0.001);
 
         if (sort === 'distance') {
-            items.sort((a, b) => a.distanceKm - b.distanceKm || (a.departureAt as any) - (b.departureAt as any));
+            items.sort((a, b) => a.distanceKm - b.distanceKm || new Date(a.departureAt).getTime() - new Date(b.departureAt).getTime());
         }
     }
 

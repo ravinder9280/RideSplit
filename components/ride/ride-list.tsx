@@ -8,7 +8,12 @@ export default async function RideList({
 }: {
     searchParams: Record<string, string | string[] | undefined>;
 }) {
-    const qs = new URLSearchParams(searchParams as any).toString();
+    const qs = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+        if (value !== undefined) {
+            qs.set(key, Array.isArray(value) ? value[0] : value);
+        }
+    });
 
     // Build absolute base URL from request headers (supports local + Vercel)
     const h = headers();
@@ -31,7 +36,8 @@ export default async function RideList({
         throw new Error(`Search API ${res.status}: ${text || url}`);
     }
 
-    const { items = []} = (await res.json()) as any;
+    const response = await res.json() as { items?: Ride[] };
+    const items = response.items || [];
 
     // if (!items.length) {
     //     return (
