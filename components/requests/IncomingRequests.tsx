@@ -29,7 +29,7 @@ export default async function IncomingRequests() {
     }
 
     return (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg::grid-cols-3">
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg::grid-cols-3">
             {rows.map((m) => (
                 <li key={m.id} className="rounded-md border p-3 space-y-2 ">
                     <div className="space-y-2">

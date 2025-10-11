@@ -16,6 +16,7 @@ import RidePin from '../common/RidePin';
 import { requestRide } from '@/actions/rides/request';
 import { SeatSelector } from '../ui/seat-stepper';
 import { toast } from 'sonner';
+import { Spinner } from '../ui/spinner';
 
 type Coord = { lng: number; lat: number };
 
@@ -48,6 +49,7 @@ export default function MapLine({ from = { lat: 28.410484, lng: 77.31821 }, to =
     const mapRef = useRef<mapboxgl.Map | null>(null);
     const fromMarkerRef = useRef<mapboxgl.Marker | null>(null);
     const toMarkerRef = useRef<mapboxgl.Marker | null>(null);
+    const [loading, setLoading] = useState(false)
     // state: keep numeric distance/duration
     const [routeInfo, setRouteInfo] = useState<{ distance: number; duration: number } | null>(null);
     const { user } = useUser();
@@ -112,7 +114,7 @@ console.log(rideId)
         };
 
         if (source) {
-            source.setData(data as any);
+            source.setData(data);
         } else {
             mapRef.current.addSource(ROUTE_SOURCE_ID, { type: 'geojson', data });
             mapRef.current.addLayer({
@@ -146,7 +148,7 @@ console.log(rideId)
 
         // Fit map to the route's bounds
         const bounds = new mapboxgl.LngLatBounds();
-        routeData.geometry.coordinates.forEach((c: any) => bounds.extend(c));
+        routeData.geometry.coordinates.forEach((c: [number, number]) => bounds.extend(c));
         mapRef.current.fitBounds(bounds, { padding: 60, maxZoom: 14, duration: 600 });
     };
 
@@ -181,15 +183,24 @@ console.log(rideId)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     async function requestRideWrapper(formData: FormData) {
-        const result = await requestRide(formData);
-        console.log(result); 
-        if (result.ok) {
-            toast.success("Request Sent Successfully")
-        }
-        else {
-            toast.success(result.message)
+        try {
 
-            
+            setLoading(true)
+            const result = await requestRide(formData);
+            console.log(result);
+            if (result.ok) {
+                toast.success("Request Sent Successfully")
+            }
+            else {
+                toast.error(result.message || "Failed to send request")
+            }
+        }
+        catch (e) {
+            const errorMessage = e instanceof Error ? e.message : "An unexpected error occurred";
+            toast.error(errorMessage);
+        }
+        finally {
+            setLoading(false)
         }
     }
 
@@ -320,7 +331,16 @@ console.log(rideId)
                                             <Button variant="outline">Cancel</Button>
                                             </DialogClose>
                                             
-                                        <Button type="submit">Sent Request</Button>
+                                            <Button disabled={loading} type="submit">
+                                                {loading ? (
+                                                    <span className="flex items-center gap-2">
+                                                        <Spinner />
+                                                        Sending Request...
+                                                    </span>
+                                                ) : (
+                                                    <span>Request Ride</span>
+                                                )}
+                                            </Button>
                                     </DialogFooter>
                                     </form>
                                 </DialogContent>

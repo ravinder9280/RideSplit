@@ -17,7 +17,7 @@ import NotificationBadge from './common/NotificationBadge'
 
 export const NavItems = [
     { label: "Home", href: "/" },
-    { label: "How it works", href: "/how-it-works" },
+    { label: "Ask AI", href: "/ai" },
 
     {
         label: "Rides",

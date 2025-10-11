@@ -4,7 +4,6 @@ import AllowLocationBanner from "@/components/common/AllowLocationBanner"; // cl
 import MobileTabs from "@/components/Mobile-Tabs";
 import { ListSkeleton } from "@/components/common/ListSkeleton";
 import { Suspense } from "react";
-import LocationDialogInput from "@/components/common/LocationDialogInput";
 import LocationNavigator from "@/components/common/LoacationNavigator";
 import LatestRides from "@/components/ride/latest-rides";
 export default async function HomePage({
@@ -22,11 +21,15 @@ export default async function HomePage({
   const denied = get("loc") === "denied";
 
   return (
-    <main className="max-w-6xl mx-auto  space-y-6">
+    <main className="max-w-7xl mx-auto  space-y-6">
       {denied && <AllowLocationBanner />}
      <LocationNavigator/>
       <MobileTabs />
       <LocationInit />
+
+      {/* Chatbot Section */}
+     
+
       <Suspense fallback={<ListSkeleton/>}>
         
       {fromLat && fromLng ? (
