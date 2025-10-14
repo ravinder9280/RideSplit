@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search,Plus,Car} from 'lucide-react'
+import { Search, Plus, Car } from 'lucide-react'
+
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -95,7 +96,7 @@ const Navbar = () => {
                       
                       
                   </div>
-                  <div className='flex items-center pl-6 gap-2'>
+                  <div className='flex items-center pl-6 gap-4 md:gap-6'>
 
                       {
                           user ? <div className='flex items-center  gap-4 md:gap-6'>
@@ -115,6 +116,7 @@ const Navbar = () => {
                               </Button>
 
                       }
+                      
                   </div>
 
                   

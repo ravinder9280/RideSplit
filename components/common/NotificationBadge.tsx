@@ -23,14 +23,14 @@ const NotificationBadge = () => {
     const count = data?.count ?? 0;
     console.log(count)
     return (
-        <div className='relative w-full'>
+        <div className='relative w-full hover:bg-muted rounded-full'>
             <Avatar className='size-9 rounded-sm'>
                 <AvatarFallback className='rounded-sm'>
                     <Inbox className='size-5' />
                 </AvatarFallback>
             </Avatar>
             {
-                count>0 && <Badge className='absolute bg-destructive/80 text-white text-xs -top-0.5 -right-1.5 h-4 min-w-4 rounded-full px-1 tabular-nums'>{count}</Badge>
+                count>0 && <Badge className='absolute bg-destructive/80 text-white text-xs -top-0.5 -right-1 h-4 min-w-4 rounded-full px-1 tabular-nums'>{count}</Badge>
 }
             
         </div>

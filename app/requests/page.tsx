@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default async function RequestsHubPage() {
     return (
-        <main className="max-w-5xl mx-auto p-6 space-y-6">
+        <main className="max-w-7xl mx-auto p-6 space-y-6">
             <h1 className="text-xl font-semibold">Requests</h1>
             <Separator/>
 
@@ -21,8 +21,7 @@ export default async function RequestsHubPage() {
                 </TabsContent>
 
                 <TabsContent value="mine">
-                    {/* @ts-expect-error Async Server Component */}
-                    <MyRequestsList />
+                    <MyRequestsList filter="ALL" />
                 </TabsContent>
             </Tabs>
         </main>

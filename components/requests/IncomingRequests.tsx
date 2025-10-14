@@ -17,12 +17,16 @@ export default async function IncomingRequests() {
             status: "PENDING",
             ride: { owner: { clerkId: userId } },
         },
-        include: {
-            ride: { select:{id:true,fromText:true,toText:true}},
-            user: { select: { name: true, imageUrl: true ,email:true} },
+        select: {
+            id: true,
+            seatsRequested: true, 
+            createdAt: true,
+            ride: { select: { id: true, fromText: true, toText: true } },
+            user: { select: { name: true, imageUrl: true, email: true } },
         },
         orderBy: { createdAt: "desc" },
     });
+
 
     if (rows.length === 0) {
         return <div className="rounded-md border p-4 text-sm text-muted-foreground">No pending requests.</div>;
@@ -31,29 +35,30 @@ export default async function IncomingRequests() {
     return (
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg::grid-cols-3">
             {rows.map((m) => (
-                <li key={m.id} className="rounded-md border p-3 space-y-2 ">
-                    <div className="space-y-2">
+                <li key={m.id} className="rounded-md border p-3 flex flex-col gap-2 ">
                         <div className='flex items-center gap-2'>
                             <div>
                                 <Image height={20} width={20} className='w-10 rounded-full h-10' alt='' src={m.user.imageUrl || ''} />
                             </div>
                             <div className='flex items-start flex-col'>
-                                <h3 className='font-bold'>{m.user.name}</h3>
-                                <span className='text-muted-foreground text-start text-xs'>{m.user.email}</span>
+                                <h3 className='font-bold line-clamp-1'>{m.user.name}</h3>
+                                <span className='text-muted-foreground line-clamp-1 text-start text-xs'>{m.user.email}</span>
 
                             </div>
 
                         </div>
                         
 
-                        <Link href={`/ride/${m.rideId}`}>
+                        <Link href={`/ride/${m.ride.id}`}>
                             <RidePin fromText={m.ride.fromText} toText={m.ride.toText} lineClampClass={"line-clamp-1"} />
                         
                         </Link>
                         
-                    </div>
-                        <div className="flex items-center justify-end">
-
+                    <div className="flex items-center gap-2 justify-between">
+                        <div className="text-sm">
+                            <span className="text-muted-foreground">Seats Requested: </span>
+                            <span className="">{m.seatsRequested}x</span>
+                        </div>
                     <AcceptDeclineButtons memberId={m.id}  />
                         </div>
                 </li>

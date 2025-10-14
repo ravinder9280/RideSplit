@@ -8,10 +8,10 @@ import { Car } from "lucide-react";
 export default function RideCard({ r }: { r: Ride }) {
     return (
         <Link href={`/ride/${r.id}`}
-            className="rounded-xl hover:bg-card/70 bg-card/50 p-4 hover:shadow-md space-y-2  transition-shadow"
+            className="rounded-xl hover:bg-card/70 bg-card/50 p-4 hover:shadow-md flex flex-col justify-between gap-2 border  transition-shadow"
         >
-            <div className="flex items-start h-32 justify-between">
-                <div className="min-h-24">
+            <div className="flex items-start   justify-between">
+                <div className="">
                     <RidePin lineClampClass={"line-clamp-2"} fromText={ r.fromText} toText={r.toText} />
                     
                 </div>
@@ -24,9 +24,8 @@ export default function RideCard({ r }: { r: Ride }) {
                 </div>
                 
             </div>
-            <Separator/>
             
-            <div className="mt-3 text-muted-foreground flex items-center justify-between text-sm">
+            <div className="pt-4 text-muted-foreground flex items-center border-t justify-between text-sm">
                 <div className="flex items-center space-x-4">
                     <Car className="" height={ 20} width={20} />
 

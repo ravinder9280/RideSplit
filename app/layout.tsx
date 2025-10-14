@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from '@clerk/themes'
 import { Toaster, } from 'sonner'
+import { ThemeProvider } from "@/components/theme-provider"
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -33,15 +34,23 @@ export default function RootLayout({
     <html lang="en">
       <link rel="icon"  href="/logo.png" type="image/jpg"  sizes="any" />
       <body
-        className={`${outfit.variable} antialiased dark`}
+        className={`${outfit.variable} antialiased  `}
         >
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            
+          >            
           <>
             <Toaster closeButton position="top-right" richColors={true} />
           <Navbar/>
               <main className="mt-[4rem] w-full sm:p-4 md:p-6 lg:p-8 p-2 ">
 
               {children}
-            </main>        </>
+              </main>        </>
+        </ThemeProvider>
       </body>
     </html>
     </ClerkProvider>

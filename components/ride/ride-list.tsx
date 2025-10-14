@@ -81,7 +81,7 @@ export default async function RideList({
             {items.length&&items.length?
 
                 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:gap-5 md:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {items.map((r: Ride,i:number) => (
                 <RideCard r={r} key={i}/>
             ))}

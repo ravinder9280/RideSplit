@@ -79,7 +79,7 @@ export default function ChatBox() {
             <div className="rounded-xl border bg-card p-3 space-y-3">
                 <div className=" min-h-[200px] md:min-h-[400px] overflow-auto space-y-2 text-sm">
                     {thread.map((m, idx) => (
-                        <div key={idx} className={cn("p-2 rounded-md", m.role === "user" ? "bg-primary/10" : "bg-muted")}>
+                        <div key={idx} className={cn("p-2 rounded-md", m.role === "user" ? "bg-primary/10" : "")}>
                             {m.content}
                         </div>
                     ))}
@@ -87,6 +87,7 @@ export default function ChatBox() {
                 <div className="flex gap-2">
                     <Input
                         value={input}
+                        className="bg-muted/50"
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="e.g., Tomorrow 7–9pm, Gurgaon → Noida, 2 seats"
                         onKeyDown={(e) => {
@@ -96,7 +97,7 @@ export default function ChatBox() {
                             }
                         }}
                     />
-                    <Button onClick={onSend} disabled={isMutating || !input.trim()}>
+                    <Button className="h-full" onClick={onSend} disabled={isMutating || !input.trim()}>
                         {isMutating ? "Searching..." : "Send"}
                     </Button>
                 </div>

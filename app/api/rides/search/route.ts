@@ -58,88 +58,102 @@ function haversineKm(aLat: number, aLng: number, bLat: number, bLng: number) {
 export async function GET(req: NextRequest) {
     const parsed = qSchema.safeParse(Object.fromEntries(req.nextUrl.searchParams));
     if (!parsed.success) {
-        return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+        return NextResponse.json({ok:false, error: parsed.error.flatten(),message:"Location Parsing Failed" }, { status: 400 });
     }
+    try {
+        const {
+            fromLat, fromLng, toLat, toLng, date, window,
+            seats, service, verifiedOnly, sort,
+            radiusKm, page, pageSize,
+        } = parsed.data;
 
-    const {
-        fromLat, fromLng, toLat, toLng, date, window,
-        seats, service, verifiedOnly, sort,
-        radiusKm, page, pageSize,
-    } = parsed.data;
+        const where: Prisma.RideWhereInput = {
+            status: 'ACTIVE',
+            seatsAvailable: { gte: seats },
+        };
 
-    const where: Prisma.RideWhereInput = {
-        status: 'ACTIVE',
-        seatsAvailable: { gte: seats },
-    };
-
-    // time window
-    const { start, end } = windowBounds(date, window);
-    if (start && end) where.departureAt = { gte: start, lte: end };
-    else if (date) {
-        const d0 = new Date(`${date}T00:00:00Z`);
-        const d1 = new Date(`${date}T23:59:59Z`);
-        where.departureAt = { gte: d0, lte: d1 };
-    }
-
-    if (service) where.service = service;
-    if (verifiedOnly) where.isVerified = true;
-
-    // geo (coarse bbox to narrow DB scan)
-    const andFilters: Prisma.RideWhereInput[] = [];
-    const hasFrom = fromLat != null && fromLng != null;
-    const hasTo = toLat != null && toLng != null;
-
-    if (hasFrom) {
-        const b = bboxAround(fromLat!, fromLng!, radiusKm); // use requested radius
-        andFilters.push({ fromLat: { gte: b.minLat, lte: b.maxLat }, fromLng: { gte: b.minLng, lte: b.maxLng } });
-    }
-    if (hasTo) {
-        const b = bboxAround(toLat!, toLng!, radiusKm);
-        andFilters.push({ toLat: { gte: b.minLat, lte: b.maxLat }, toLng: { gte: b.minLng, lte: b.maxLng } });
-    }
-    if (andFilters.length) where.AND = andFilters;
-
-    // default DB ordering of
-    let orderBy: Prisma.RideOrderByWithRelationInput[] = [{ departureAt: 'asc' }];
-    if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
-
-    const skip = (page - 1) * pageSize;
-
-    // Pull a page from DB (already narrowed by bbox/time/filters)
-    const [rawItems, totalDb] = await Promise.all([
-        prisma.ride.findMany({
-            where,
-            orderBy,
-            skip,
-            take: pageSize,
-            include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
-        }),
-        prisma.ride.count({ where }),
-    ]);
-
-    // If we have coords, compute precise distance, optionally filter and sort
-    let items = rawItems.map((r) => ({
-        ...r,
-        distanceKm: hasFrom ? haversineKm(fromLat!, fromLng!, r.fromLat, r.fromLng) : 0,
-    }));
-
-    if (hasFrom) {
-        // precise radius filter (inside requested km)
-        items = items.filter((r) => r.distanceKm <= radiusKm + 0.001);
-
-        if (sort === 'distance') {
-            items.sort((a, b) => a.distanceKm - b.distanceKm || new Date(a.departureAt).getTime() - new Date(b.departureAt).getTime());
+        // time window
+        const { start, end } = windowBounds(date, window);
+        if (start && end) where.departureAt = { gte: start, lte: end };
+        else if (date) {
+            const d0 = new Date(`${date}T00:00:00Z`);
+            const d1 = new Date(`${date}T23:59:59Z`);
+            where.departureAt = { gte: d0, lte: d1 };
         }
-    }
 
-    // For accuracy, reflect the filtered count if distance filter applied
-    const total = hasFrom ? items.length : totalDb;
+        if (service) where.service = service;
+        if (verifiedOnly) where.isVerified = true;
 
-    return NextResponse.json({
-        items,
-        total,
-        page,
-        pageSize,
-        pages: Math.ceil(total / pageSize),
-    });
+        // geo (coarse bbox to narrow DB scan)
+        const andFilters: Prisma.RideWhereInput[] = [];
+        const hasFrom = fromLat != null && fromLng != null;
+        const hasTo = toLat != null && toLng != null;
+
+        if (hasFrom) {
+            const b = bboxAround(fromLat!, fromLng!, radiusKm); // use requested radius
+            andFilters.push({ fromLat: { gte: b.minLat, lte: b.maxLat }, fromLng: { gte: b.minLng, lte: b.maxLng } });
+        }
+        if (hasTo) {
+            const b = bboxAround(toLat!, toLng!, radiusKm);
+            andFilters.push({ toLat: { gte: b.minLat, lte: b.maxLat }, toLng: { gte: b.minLng, lte: b.maxLng } });
+        }
+        if (andFilters.length) where.AND = andFilters;
+
+        // default DB ordering of
+        let orderBy: Prisma.RideOrderByWithRelationInput[] = [{ departureAt: 'asc' }];
+        if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
+
+        const skip = (page - 1) * pageSize;
+
+        // Pull a page from DB (already narrowed by bbox/time/filters)
+        const [rawItems, totalDb] = await Promise.all([
+            prisma.ride.findMany({
+                where,
+                orderBy,
+                skip,
+                take: pageSize,
+                include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
+            }),
+            prisma.ride.count({ where }),
+        ]);
+
+        // If we have coords, compute precise distance, optionally filter and sort
+        let items = rawItems.map((r) => ({
+            ...r,
+            distanceKm: hasFrom ? haversineKm(fromLat!, fromLng!, r.fromLat, r.fromLng) : 0,
+        }));
+
+        if (hasFrom) {
+            // precise radius filter (inside requested km)
+            items = items.filter((r) => r.distanceKm <= radiusKm + 0.001);
+
+            if (sort === 'distance') {
+                items.sort((a, b) => a.distanceKm - b.distanceKm || new Date(a.departureAt).getTime() - new Date(b.departureAt).getTime());
+            }
+        }
+
+        // For accuracy, reflect the filtered count if distance filter applied
+        const total = hasFrom ? items.length : totalDb;
+
+        return NextResponse.json({
+            ok: true,
+            message: "Successfully Fetched",
+            items,
+            total,
+            page,
+            pageSize,
+            pages: Math.ceil(total / pageSize),
+        });
+    
+}
+    catch (error:any) {
+        return NextResponse.json({
+            ok: true,
+            message: error.message,
+            
+           
+        },{status:500});
+    
+}
+    
 }
