@@ -5,6 +5,7 @@ import AcceptDeclineButtons from "./OwnerAcceptDeclineButtons";
 import Image from "next/image";
 import Link from "next/link";
 import RidePin from "../common/RidePin";
+import UserCard from "../user-card";
 
 export default async function IncomingRequests() {
     const user = await currentUser();
@@ -22,7 +23,7 @@ export default async function IncomingRequests() {
             seatsRequested: true, 
             createdAt: true,
             ride: { select: { id: true, fromText: true, toText: true } },
-            user: { select: { name: true, imageUrl: true, email: true } },
+            user: { select: { name: true, imageUrl: true, email: true ,id:true} },
         },
         orderBy: { createdAt: "desc" },
     });
@@ -36,18 +37,7 @@ export default async function IncomingRequests() {
         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg::grid-cols-3">
             {rows.map((m) => (
                 <li key={m.id} className="rounded-md border p-3 flex flex-col gap-2 ">
-                        <div className='flex items-center gap-2'>
-                            <div>
-                                <Image height={20} width={20} className='w-10 rounded-full h-10' alt='' src={m.user.imageUrl || ''} />
-                            </div>
-                            <div className='flex items-start flex-col'>
-                                <h3 className='font-bold line-clamp-1'>{m.user.name}</h3>
-                                <span className='text-muted-foreground line-clamp-1 text-start text-xs'>{m.user.email}</span>
-
-                            </div>
-
-                        </div>
-                        
+                    <UserCard userName={m.user?.name || "user"} userEmail={m.user?.email || "email"} userId={m.user?.id} userImage={m.user.imageUrl||"userimage"} />    
 
                         <Link href={`/ride/${m.ride.id}`}>
                             <RidePin fromText={m.ride.fromText} toText={m.ride.toText} lineClampClass={"line-clamp-1"} />
