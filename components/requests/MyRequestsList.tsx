@@ -6,6 +6,7 @@ import CancelRequestButton from "./MyRequestCancelButton";
 import RidePin from "../common/RidePin";
 import { Badge } from "../ui/badge";
 import { ListSkeleton } from "../common/ListSkeleton";
+import UserCard from "../user-card";
 
 const fetcher = (url: string) => fetch(url).then(r => {
     if (!r.ok) throw new Error("failed To Load");
@@ -13,15 +14,20 @@ const fetcher = (url: string) => fetch(url).then(r => {
     return r.json();
 });
 
+type RideOwner = { id?: string; name?: string; email?: string; imageUrl?: string };
+type RideInfo = { fromText: string; toText: string; owner?: RideOwner };
+type RideMember = { id: string; status: "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED"; rideId: string; ride: RideInfo };
+type MyRequestsResponse = { rows: RideMember[] };
+
 export default function MyRequestsListClient({
     filter,
     fallback, // optional initial data from server (for fast first paint)
 }: {
     filter: "ALL" | "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED";
-    fallback?: any;
+        fallback?: MyRequestsResponse;
 }) {
     const swrKey = `/api/requests/my-requests?filter=${filter}`;
-    const { data, error, isLoading } = useSWR(swrKey, fetcher, {
+    const { data, error, isLoading } = useSWR<MyRequestsResponse>(swrKey, fetcher, {
         fallbackData: fallback, // enables SSR + hydrate
         revalidateOnFocus: true,
     });
@@ -35,18 +41,18 @@ export default function MyRequestsListClient({
         return <div className="rounded-md border p-4 text-sm text-muted-foreground">No requests.</div>;
     }
 
-    const badgeVariant = (s: string) =>
+    const badgeVariant = (s: RideMember["status"]) =>
         s === "PENDING" ? "amber-subtle" :
             s === "ACCEPTED" ? "green-subtle" :
                 s === "DECLINED" ? "red-subtle" :
-                    s === "CANCELLED" ? "gray-subtle" : "outline";
+                    "gray-subtle";
 
     return (
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {rows.map((m: any) => (
+            {rows.map((m) => (
                 <li key={m.id} className="rounded-md border flex flex-col gap-2 p-3">
                     <div>
-                        <Badge variant={badgeVariant(m.status)||"pink"} size="sm">{m.status}</Badge>
+                        <Badge variant={badgeVariant(m.status)} size="sm">{m.status}</Badge>
                     </div>
 
                     <Link href={`/ride/${m.rideId}`} className="font-medium">
@@ -58,9 +64,8 @@ export default function MyRequestsListClient({
                     </Link>
 
                     <div className="flex items-center justify-between">
-                        <div className="text-xs text-muted-foreground">
-                            Owner: {m.ride.owner?.name ?? "Owner"}
-                        </div>
+                        <UserCard className="pr-2" userName={m.ride.owner?.name ?? "Owner"} userEmail={m.ride.owner?.email ?? ""} userId={m.ride.owner?.id ?? ""} userImage={m.ride.owner?.imageUrl ?? "/logo.png"} />
+
 
                         {(m.status === "PENDING" || m.status === "ACCEPTED") && (
                             <CancelRequestButton memberId={m.id} swrKey={swrKey} />

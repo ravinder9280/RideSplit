@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search, Plus, Car } from 'lucide-react'
+import { Search, Plus, Car, CarFront } from 'lucide-react'
 
 import {
     NavigationMenu,
@@ -45,8 +45,11 @@ const Navbar = () => {
           <div className='w-full sm:px-6 md:px-16 lg:px-28 px-4'>
               <div className='flex items-center h-16'>
                   <div className='flex-1 flex items-center'>
-                      <Link href={'/'} className='text-foregroundzzzz font-poppins font-bold text-2xl flex items-center cursor-pointer'>
+                      <Link href={'/'} className='text-foreground font-poppins font-bold text-xl flex items-center cursor-pointer'>
+                          <CarFront className='text-primary' />
+                          <span className='ml-2'>
                           RidePlus
+                          </span>
                           
                       </Link>
                       
