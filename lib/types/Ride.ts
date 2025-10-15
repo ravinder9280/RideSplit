@@ -1,4 +1,12 @@
+export type Owner = {
+    imageUrl?: string | null
+    rating?: number | null,
+    name?: string | null,
+    id?: string | number,
+    clerkId: string | number,
+}
 export interface Ride {
+    id?:string,
     fromText: string
     fromLat: number
     fromLng: number
@@ -10,14 +18,7 @@ export interface Ride {
     estTotalFare: number
     perSeatPrice:number
     service: "UBER" | "OLA"
-    owner?: {
-        
-            imageUrl?: string,
-            rating?: number,
-            name?: string,
-
-        
-    }   , id: number
+    owner?:  Owner , 
     seatsAvailable : number
 
 

@@ -1,7 +1,11 @@
 import RidePin from '@/components/common/RidePin'
 import MapLine from '@/components/map/map'
+import { RideDetailsCard } from '@/components/ride/RideDetailsCard'
+import RidePassengers from '@/components/ride/RidePassengers'
 import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
+import { currentUser } from "@clerk/nextjs/server"
+import type { MemberStatus } from '@/components/ride/RideDetailsCard'
 
 type PageProps = { params: { id: string } }
 
@@ -43,22 +47,62 @@ export default async function Page({ params }: PageProps) {
     const from = { lat: ride.fromLat, lng: ride.fromLng }
     const to = { lat: ride.toLat, lng: ride.toLng }
 
+    // Resolve current user's membership status for this ride
+    let memberStatus: MemberStatus = 'NONE'
+    try {
+        const clerk = await currentUser()
+        const clerkId = clerk?.id
+        if (clerkId) {
+            const user = await prisma.user.findUnique({ where: { clerkId }, select: { id: true } })
+            if (user?.id) {
+                const member = await prisma.rideMember.findUnique({
+                    where: { rideId_userId: { rideId: ride.id, userId: user.id } },
+                    select: { status: true },
+                })
+                if (member?.status) {
+                    memberStatus = member.status as MemberStatus
+                }
+            }
+        }
+    } catch {
+        // ignore errors and default to 'NONE'
+    }
+
     return (
-        <div className='mx-auto max-w-5xl'>
+        <div className='mx-auto max-w-5xl  md:max-w-7xl'>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                <div className=' flex flex-col gap-4 col-span-2'>
+                    
+                <div className='flex flex-col gap-4'>
+
             
             <RidePin lineClampClass={"line-clamp-2 max-w-xl"} fromText={ride.fromText} toText={ride.toText} />
 
         <MapLine
                 from={from} to={to}
-                owner={ride.owner}
+
+                    />
+                </div>
+                <RideDetailsCard
+                    seatsAvailable={ride.seatsAvailable}
+                    rideId={ride.id}
                 status={ride.status}
                 startsAt={ride.departureAt.toDateString()||''}
+                    owner={ride.owner}
                 perSeatPrice={ride.perSeatPrice || ''}
                 fromText={ride.fromText}
                 toText={ride.toText}
-                seatsAvailable={ride.seatsAvailable}
-                rideId={ride.id}
-            />
+                    memberStatus={memberStatus}
+
+
+                    />
+                </div>
+                <div className='col-span-1 '>
+
+
+                <RidePassengers rideId={ride.id} />
+                </div>
+            </div>
             </div>
     )
 }

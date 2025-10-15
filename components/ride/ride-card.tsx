@@ -1,9 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Ride } from "@/lib/types/Ride";
 import RidePin from "../common/RidePin";
-import { Separator } from "../ui/separator";
-import { Car } from "lucide-react";
+import { Car, Star } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function RideCard({ r }: { r: Ride }) {
     return (
@@ -30,20 +29,19 @@ export default function RideCard({ r }: { r: Ride }) {
                     <Car className="" height={ 20} width={20} />
 
                 <div className="flex items-center gap-2">
-                    <div className="size-8 overflow-hidden rounded-full bg-muted">
-                        {r.owner?.imageUrl ? (
-                            <Image
-                            src={r.owner.imageUrl}
-                            alt={r.owner?.name ?? "owner"}
-                            width={32}
-                            height={32}
-                            />
-                        ) : null}
-                        </div>
-                        <div className="flex flex-col  ">
+                        <Avatar className="h-8 w-8 rounded-full hover:ring-1 hover:ring-primary" >
+                            <Link href={`/user/${r.owner?.id}`}>
 
-                    <span className="">{r.owner?.name ?? "Owner"}</span>
-                    <span className="text-sm">⭐ {r.owner?.rating ?? 5}</span>
+                                <AvatarImage src={r.owner?.imageUrl || undefined} />
+                                <AvatarFallback>{r.owner?.name?.[0] ?? "U"}</AvatarFallback>
+                            </Link>
+                        </Avatar>
+                        <div>
+                            <h3 className=" truncate  ">{r.owner?.name||"user"}</h3>
+                            <div className="text-muted-foreground flex items-center text-sm gap-1"> <span>
+                                <Star size={12} fill="yellow" stroke="yellow" />
+                            </span>
+                                {r.owner?.rating||"n/a"}</div>
                         </div>
                 </div>
                 </div>

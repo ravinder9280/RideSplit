@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { publishRide } from "@/actions/rides/actions";
-import MapboxAutocomplete from "@/components/location/autocomplete";
+import LocationDialogInput from "@/components/common/LocationDialogInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -118,8 +118,14 @@ export default function PublishRideForm() {
             className="space-y-4 p-6"
             aria-busy={pending}
         >
-            <MapboxAutocomplete label="Leaving From" namePrefix="from" limit={10} />
-            <MapboxAutocomplete label="Going To" namePrefix="to" limit={10} />
+            <div className="space-y-1">
+                <label className="block text-sm font-medium">Leaving From</label>
+                <LocationDialogInput namePrefix="from" placeholder="Pickup location" required />
+            </div>
+            <div className="space-y-1">
+                <label className="block text-sm font-medium">Going To</label>
+                <LocationDialogInput namePrefix="to" placeholder="Drop location" required />
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
