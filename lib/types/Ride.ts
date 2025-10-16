@@ -2,8 +2,9 @@ export type Owner = {
     imageUrl?: string | null
     rating?: number | null,
     name?: string | null,
-    id?: string | number,
-    clerkId: string | number,
+    id?: string ,
+    email?: string ,
+    clerkId?: string | number,
 }
 export interface Ride {
     id?:string,
@@ -23,3 +24,7 @@ export interface Ride {
 
 
 }
+export type RideInfo = { fromText: string; toText: string; owner?: Owner };
+
+export type RideMember = { id: string; status: "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED"; rideId: string; ride: RideInfo };
+

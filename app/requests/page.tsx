@@ -1,6 +1,6 @@
 // app/requests/page.tsx
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import IncomingRequests from "@/components/requests/IncomingRequests";
+import IncomingRequestsClient from "@/components/requests/IncomingRequests";
 import MyRequestsList from "@/components/requests/MyRequestsList";
 import { Separator } from "@/components/ui/separator";
 import { Handshake } from 'lucide-react';
@@ -25,7 +25,7 @@ export default async function RequestsHubPage() {
                 </TabsList>
 
                 <TabsContent value="incoming">
-                    <IncomingRequests />
+                    <IncomingRequestsClient />
                 </TabsContent>
 
                 <TabsContent value="mine">

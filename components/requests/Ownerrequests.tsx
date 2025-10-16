@@ -1,7 +1,7 @@
 // components/ride/OwnerRequests.tsx
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
-import AcceptDeclineButtons from "./OwnerRequestButtons";
+import AcceptDeclineButtons from "./OwnerAcceptDeclineButtons";
 
 export default async function OwnerRequests({ rideId }: { rideId: string }) {
     const user =  await currentUser();

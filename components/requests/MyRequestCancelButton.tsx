@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { cancelMyRequest } from "@/actions/rides/cancel";
 import { Spinner } from "../ui/spinner";
 import { useSWRConfig } from "swr";
+import { toast } from "sonner";
 
 type RideMemberRow = {
     id: string;
@@ -33,22 +34,30 @@ export default function CancelRequestButton({
             disabled={pending}
             onClick={() =>
                 start(async () => {
-                    // Optimistic remove
-                    await mutate<MyRequestsData>(
-                        swrKey,
-                        async (current) => {
-                    // perform server-side cancel first (or after optimistic diff if you prefer)
-                            await cancelMyRequest(memberId);
-                            if (!current) return current;
-                            return {
-                                ...current,
-                                rows: current.rows.map((r): RideMemberRow =>
-                                    r.id === memberId ? { ...r, status: "CANCELLED" } : r
-                                ),
-                            };
-                        },
-                        { revalidate: true, rollbackOnError: true }
-                    );
+                    try {
+                        // Optimistic update
+                        await mutate<MyRequestsData>(
+                            swrKey,
+                            async (current) => {
+                                // perform server-side cancel first
+                                const result = await cancelMyRequest(memberId);
+                                if (!result.ok) {
+                                    throw new Error(result.message || "Failed to cancel request");
+                                }
+                                if (!current) return current;
+                                return {
+                                    ...current,
+                                    rows: current.rows.map((r): RideMemberRow =>
+                                        r.id === memberId ? { ...r, status: "CANCELLED" } : r
+                                    ),
+                                };
+                            },
+                            { revalidate: true, rollbackOnError: true }
+                        );
+                        toast.success("Request cancelled successfully!");
+                    } catch (error) {
+                        toast.error(error instanceof Error ? error.message : "Failed to cancel request");
+                    }
                 })
             }
         >

@@ -7,16 +7,13 @@ import RidePin from "../common/RidePin";
 import { Badge } from "../ui/badge";
 import { ListSkeleton } from "../common/ListSkeleton";
 import UserCard from "../user-card";
-
+import { RideMember } from "@/lib/types/Ride";
 const fetcher = (url: string) => fetch(url).then(r => {
     if (!r.ok) throw new Error("failed To Load");
     
     return r.json();
 });
 
-type RideOwner = { id?: string; name?: string; email?: string; imageUrl?: string };
-type RideInfo = { fromText: string; toText: string; owner?: RideOwner };
-type RideMember = { id: string; status: "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED"; rideId: string; ride: RideInfo };
 type MyRequestsResponse = { rows: RideMember[] };
 
 export default function MyRequestsListClient({
@@ -51,9 +48,8 @@ export default function MyRequestsListClient({
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {rows.map((m) => (
                 <li key={m.id} className="rounded-md border flex flex-col gap-2 p-3">
-                    <div>
-                        <Badge variant={badgeVariant(m.status)} size="sm">{m.status}</Badge>
-                    </div>
+                    <UserCard className="pr-2" userName={m.ride.owner?.name ?? "Owner"} userEmail={m.ride.owner?.email ?? ""} userId={m.ride.owner?.id ?? ""} userImage={m.ride.owner?.imageUrl ?? "/logo.png"} />
+
 
                     <Link href={`/ride/${m.rideId}`} className="font-medium">
                         <RidePin
@@ -64,7 +60,9 @@ export default function MyRequestsListClient({
                     </Link>
 
                     <div className="flex items-center justify-between">
-                        <UserCard className="pr-2" userName={m.ride.owner?.name ?? "Owner"} userEmail={m.ride.owner?.email ?? ""} userId={m.ride.owner?.id ?? ""} userImage={m.ride.owner?.imageUrl ?? "/logo.png"} />
+                        <div>
+                            <Badge variant={badgeVariant(m.status)} size="sm">{m.status}</Badge>
+                        </div>
 
 
                         {(m.status === "PENDING" || m.status === "ACCEPTED") && (
