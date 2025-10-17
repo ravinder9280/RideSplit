@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Ride } from "@/lib/types/Ride";
 import RidePin from "../common/RidePin";
-import { Car, Star } from "lucide-react";
+import { Atom, Car, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 export default function RideCard({ r }: { r: Ride }) {
@@ -45,13 +45,9 @@ export default function RideCard({ r }: { r: Ride }) {
                         </div>
                 </div>
                 </div>
-                <div className="flex flex-col items-center text-[10px] text-muted-foreground justify-center">
+                <div className="flex flex-col items-center  text-muted-foreground justify-center">
 
-                <p className=" ">
-                    {r.service}
-                </p>
-                <p className=" ">
-                        {new Date(r.departureAt).toLocaleString()}                 </p>
+               <Atom strokeWidth={1}/>
                 </div>
             </div>
             

@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import { currentUser } from "@clerk/nextjs/server"
 import type { MemberStatus } from '@/components/ride/RideDetailsCard'
+import { Separator } from '@/components/ui/separator'
 
 type PageProps = { params: { id: string } }
 
@@ -23,7 +24,8 @@ export default async function Page({ params }: PageProps) {
             departureAt: true,
             status: true,
             seatsAvailable: true,
-            id:true,
+            id: true,
+            
             
             owner: {
                 select: {
@@ -67,11 +69,30 @@ export default async function Page({ params }: PageProps) {
     } catch {
         // ignore errors and default to 'NONE'
     }
+    const readableDate = ride.departureAt.toLocaleDateString('en-US', {
+        weekday: 'long',  // Thursday
+        day: 'numeric',   // 16
+        month: 'long',    // October
+    })
+    const readableTime = ride.departureAt.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true, // 12-hour format with AM/PM
+    })
+
+
 
     return (
         <div className='mx-auto max-w-5xl  md:max-w-7xl'>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                 <div className=' flex flex-col gap-4 col-span-2'>
+                    <h1 className='text-2xl mt-2 font-bold'> {readableDate}</h1>
+                    <div>
+                        <span className='text-sm text-muted-foreground'>Starts At</span>
+
+                    <p className=' font-bold'>{readableTime}</p>
+                    </div>
+                    <Separator/>
                     
                 <div className='flex flex-col gap-4'>
 

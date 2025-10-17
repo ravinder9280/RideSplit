@@ -109,7 +109,9 @@ export async function GET(req: NextRequest) {
         const [rawItems, totalDb] = await Promise.all([
             prisma.ride.findMany({
                 where,
-                orderBy,
+                orderBy: {
+                    createdAt:'asc'
+                },
                 skip,
                 take: pageSize,
                 include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
@@ -149,9 +151,7 @@ export async function GET(req: NextRequest) {
     catch (error:any) {
         return NextResponse.json({
             ok: true,
-            message: error.message,
-            
-           
+            message: error.message,  
         },{status:500});
     
 }

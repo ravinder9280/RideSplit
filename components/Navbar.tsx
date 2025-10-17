@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search, Plus, Car, CarFront } from 'lucide-react'
+import { Search, Car, CarFront, PlusCircle, Inbox } from 'lucide-react'
 
 import {
     NavigationMenu,
@@ -15,6 +15,7 @@ import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
 import NotificationBadge from './common/NotificationBadge'
+import MobileNav from './mobile-sheet'
 
 export const NavItems = [
     { label: "Home", href: "/" },
@@ -24,11 +25,17 @@ export const NavItems = [
         label: "Rides",
         children: [
             { label: "Explore Rides", href: "/rides", icon: Search,image: '/car-check.png' },
-            { label: "Post a Ride", href: "/ride/new", icon: Plus, cta: true,image:'/car-plus.png' },
-            { label: "My Rides", href: "/rides", icon: Car,image:'/phone-car.png' },
+            { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true,image:'/car-plus.png' },
+            { label: "My Rides", href: "/rides/my", icon: Car,image:'/phone-car.png' },
         ],
     },
 
+]
+const mobileSheetItems = [
+    { label: "Explore Rides", href: "/rides", icon: Search, image: '/car-check.png' },
+    { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true, image: '/car-plus.png' },
+    { label: "My Rides", href: "/rides/my", icon: Car, image: '/phone-car.png' },
+    { label: "Requests", href: "/requests", icon: Inbox, image: '/phone-car.png' },
 ]
 const userButtonAppearance = {
     elements: {
@@ -44,7 +51,8 @@ const Navbar = () => {
       <header className='fixed top-0 left-0 right-0 z-[998] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
           <div className='w-full sm:px-6 md:px-16 lg:px-28 px-4'>
               <div className='flex items-center h-16'>
-                  <div className='flex-1 flex items-center'>
+                  <div className='flex-1 flex items-center gap-4'>
+                      <MobileNav navigationItems={mobileSheetItems} pathname={ pathname} />
                       <Link href={'/'} className='text-foreground font-poppins font-bold text-xl flex items-center cursor-pointer'>
                           <CarFront className='text-primary' />
                           <span className='ml-2'>

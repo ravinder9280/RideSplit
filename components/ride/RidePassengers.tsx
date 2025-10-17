@@ -7,7 +7,7 @@ type Props = { rideId: string };
 
 export default async function RidePassengers({ rideId }: Props) {
     const members = await prisma.rideMember.findMany({
-        where: { rideId },
+        where: { rideId,status:"ACCEPTED" },
         select: {
             id: true,
             status: true,
@@ -26,7 +26,7 @@ export default async function RidePassengers({ rideId }: Props) {
     }
 
     return (
-        <div className="rounded-lg border min-h-60 overflow-y-auto">
+        <div className="rounded-lg border overflow-y-auto">
             <div className="px-4 py-3 border-b font-medium">Passengers</div>
             <ul className="divide-y">
                 {members.map((m) => (
