@@ -33,7 +33,8 @@ export default async function Page({ params }: PageProps) {
                     rating: true,
                     name: true,
                     id: true,
-                    clerkId:true
+                    clerkId: true,
+                    phone:true,
                     
                     
                 }

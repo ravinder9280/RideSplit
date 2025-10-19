@@ -158,9 +158,68 @@ export function RideDetailsCard({
                 <Separator />
 
                 <div className="flex justify-between w-full items-center">
-                    <Button size="lg" variant="outline">
-                        <Phone /> Contact
-                    </Button>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                disabled={memberStatus !== "ACCEPTED"}
+                            >
+                                <Phone /> Contact
+                            </Button>
+                        </DialogTrigger>
+
+                        <DialogContent className="sm:max-w-[400px]">
+                            <DialogHeader>
+                                <h3 className="text-lg text-left font-semibold">Contact Owner</h3>
+                            </DialogHeader>
+                            <div className="space-y-3">
+                                {owner?.phone ? (
+                                    <>
+                                        
+                                        <div className=" flex items-center text-sm gap-2 text-muted-foreground">
+                                            <p className="">
+                                                You can reach {owner?.name} at:
+                                            </p>
+                                            <span className='text-base text-primary' >
+                                            {owner.phone}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Button asChild variant="secondary">
+                                                <Link href={`tel:${owner.phone}`}>
+                                                    <Phone/>
+
+                                                    <span>
+                                                        Phone
+                                                    </span>
+                                                </Link>
+                                            </Button>
+                                            <Button asChild variant="secondary">
+                                                <Link
+                                                    href={`https://wa.me/${owner.phone.toString().replace(/\D/g, "")}`}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                >
+                                                    <Image src={'/whatsapp.svg'} height={20} width={20} alt='hh'/>
+                                                    <span>
+                                                    WhatsApp
+                                                    </span>
+                                                </Link>
+                                            </Button>
+                                        </div>
+                                      
+                                    </>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">
+                                        Owner has not provided a phone number.
+                                    </p>
+                                )}
+                            </div>
+
+                        </DialogContent>
+                    </Dialog>
+
 
                     <div>
                         {memberStatus !== 'NONE' && memberStatus !== 'CANCELLED' ? (

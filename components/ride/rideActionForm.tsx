@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "../ui/spinner";
+import { SeatSelector } from "../ui/seat-stepper";
 
 // ----- Zod schema for client-side validation -----
 const PublishRideSchema = z
@@ -139,9 +140,12 @@ export default function PublishRideForm() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm font-medium mb-1">Seats</label>
-                    <Input type="number" name="seatsTotal" min={1} max={8} required />
+                <div className="w-full">
+                    <label className="block text-sm font-medium mb-1">Seats Available</label>
+                    <div className="w-full flex items-center justify-center">
+
+                    <SeatSelector name="seatsTotal"/>
+                    </div>
                 </div>
                 <div>
                     <label className="block text-sm font-medium mb-1">Estimated Fare (₹)</label>

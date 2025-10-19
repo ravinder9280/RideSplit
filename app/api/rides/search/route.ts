@@ -150,7 +150,7 @@ export async function GET(req: NextRequest) {
 }
     catch (error:any) {
         return NextResponse.json({
-            ok: true,
+            ok: false,
             message: error.message,  
         },{status:500});
     

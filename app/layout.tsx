@@ -32,7 +32,7 @@ export default function RootLayout({
     }}>
 
     <html lang="en">
-      <link rel="icon"  href="/logo.png" type="image/jpg"  sizes="any" />
+      <link rel="icon"  href="/logocar.svg" type="image/jpg"  sizes="any" />
       <body
         className={`${outfit.variable} antialiased  `}
         >

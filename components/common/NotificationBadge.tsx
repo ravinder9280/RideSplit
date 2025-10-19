@@ -1,5 +1,5 @@
 "use client";
-import { Inbox } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import useSWR from "swr";
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '../ui/shadcn-badge'
@@ -25,8 +25,8 @@ const NotificationBadge = () => {
     return (
         <div className='relative w-full hover:bg-muted rounded-full'>
             <Avatar className='size-9 rounded-sm'>
-                <AvatarFallback className='rounded-sm'>
-                    <Inbox className='size-5' />
+                <AvatarFallback className='rounded-sm '>
+                    <Bell strokeWidth={1} className='size-6' />
                 </AvatarFallback>
             </Avatar>
             {

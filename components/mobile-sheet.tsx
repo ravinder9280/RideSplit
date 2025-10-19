@@ -1,6 +1,5 @@
 import React from 'react'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from './ui/sheet'
-import { Button } from './ui/button'
 import { CarFront, ChevronRight, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
@@ -9,16 +8,11 @@ import ThemeSwitch from './ui/theme-switch'
 const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: string, href: string, icon: React.ElementType }[], pathname: string }) => {
     return (
         <Sheet>
-            <SheetTrigger asChild>
+            <SheetTrigger className=' p-2 rounded-full hover:bg-muted md:hidden' >
 
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="shrink-0 rounded-full md:hidden"
-                >
-                    <Menu className="size-5" />
+
+                    <Menu strokeWidth={1} size={6}  className='size-6' />
                     <span className="sr-only">Toggle navigation menu</span>
-                </Button>
             </SheetTrigger>
             <SheetContent className='z-[2000] w-full h-full p-0 flex flex-col justify-between pb-2' side="left">
                 <SheetHeader>

@@ -1,10 +1,11 @@
 export type Owner = {
     imageUrl?: string | null
     rating?: number | null,
-    name?: string | null,
+    name: string | null,
     id?: string ,
     email?: string ,
     clerkId?: string | number,
+    phone?:string |null
 }
 export interface Ride {
     id?:string,
