@@ -48,7 +48,7 @@ export default function LocationDialogInput({
 
                   {/* Full-screen Dialog on mobile */}
                   <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogContent showCloseButton={false} className="sm:max-w-xl z-[1000] w-screen  h-dvh    sm:w-[574px] sm:w- p-0">
+                        <DialogContent showCloseButton={false} className="sm:max-w-xl z-[1000]  max-w-full md:max-w-[calc(100%-2rem)] rounded-none border-none md:border md:rounded-lg  md: h-dvh    sm:w-[574px] sm:w- p-0">
                               
                               <div className="p-4">
                                     <MapboxAutocomplete

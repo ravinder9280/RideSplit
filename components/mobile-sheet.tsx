@@ -1,11 +1,16 @@
 import React from 'react'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from './ui/sheet'
-import { CarFront, ChevronRight, Menu, X } from 'lucide-react'
+import { CarFront, ChevronRight, LogOut, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import ThemeSwitch from './ui/theme-switch'
+import { Button } from './ui/button'
+import { SignOutButton, useAuth } from '@clerk/nextjs'
 
 const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: string, href: string, icon: React.ElementType }[], pathname: string }) => {
+    const { userId } = useAuth();     
+
+
     return (
         <Sheet>
             <SheetTrigger className=' p-2 rounded-full hover:bg-muted md:hidden' >
@@ -29,48 +34,73 @@ const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: st
 
                     <SheetClose className="p-2 hover:bg-foreground/20  rounded-full ">
 
-                        <X className=" h-6 w-6 text-foreground/80" />
+                        <X strokeWidth={1} className=" h-6 w-6 text-foreground/80" />
                         <span className="sr-only">Close</span>
                     </SheetClose>
                 </div>
                 <div className="flex flex-col divide-y px-4  justify-center   font-medium">
                    
 
-                    {navigationItems.map((item) => (
-                        <div key={item.label} className='py-2' >
+                        {navigationItems.map((item) => {
+                            const isActive =
+                                pathname === item.href || pathname.startsWith(item.href + "/");
 
-                        
-                            
-                            <SheetClose asChild >
-                                
+                            return (
+                                <div key={item.label} className="py-2">
+                                    <SheetClose asChild>
+                                        <Link
+                                            href={item.href}
+                                            aria-current={isActive ? "page" : undefined}
+                                            className={cn(
+                                                "flex items-center font-normal justify-between hover:bg-muted/40 py-2 pl-1 rounded-md",
+                                                isActive ? "text-primary" : "text-muted-foreground"
+                                            )}
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <item.icon strokeWidth={1} className="size-6 text-current" />
+                                                <span>{item.label}</span>
+                                            </div>
 
-
-
-                                    <Link
-                                    key={item.label}
-                                    href={item.href}
-                                    className={cn(pathname === item.href && 'text-primary ',`flex items-center justify-between  hover:bg-muted/40 py-2 pl-1  `)}
-                                    >
-                                    <div className='flex items-center gap-4'>
-
-                                        <item.icon className='size-5  text-muted-foreground  ' />
-                                        <span className=''>
-                                            {item.label}
-                                        </span>
-                                    </div>
-                                    <ChevronRight className='size-5  text-muted-foreground'/>
-                                </Link>
-                                
-                            </SheetClose>
-                        </div>
-                        ))}
-                </div>
+                                            <ChevronRight strokeWidth={1} className="size-6 text-current" />
+                                        </Link>
+                                    </SheetClose>
+                                </div>
+                            );
+                        })}
+                    </div>
+                   
                         </SheetHeader>
                 <SheetFooter>
-                    <div className='px-4 py-2 border-t'>
-                        <div className='flex flex-col gap-1 justify-center'>
+                    <div className='px-4 py-2 border-t flex items-center w-full justify-between'>
+                        <div className='flex items-center w-full justify-start '>
+                            {userId?
 
-                        <span className='text-sm text-muted-foreground'>Dark Mode</span>
+                                <SheetClose>
+
+                            <SignOutButton redirectUrl="/sign-in">
+                                <Button variant={'ghost'}
+                                    className="   text-red-500   "                        >
+                                    <span className=''>
+
+                                        Logout
+                                    </span>
+                                    <LogOut  className='size-6' size={24} />
+                                </Button>
+                            </SignOutButton>
+                                </SheetClose> :
+                                <SheetClose  asChild>
+
+                                <Button variant={'outline'} asChild >
+                                    <Link href={'/sign-in'}>
+
+                                        SignIn
+                                    </Link>
+                                </Button>
+                                </SheetClose>
+                            }
+                        </div>
+                        <div className=''>
+
 
                     <ThemeSwitch />
                         </div>

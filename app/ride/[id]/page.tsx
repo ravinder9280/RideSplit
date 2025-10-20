@@ -89,7 +89,7 @@ export default async function Page({ params }: PageProps) {
                 <div className=' flex flex-col gap-4 col-span-2'>
                     <h1 className='text-2xl mt-2 font-bold'> {readableDate}</h1>
                     <div>
-                        <span className='text-sm text-muted-foreground'>Starts At</span>
+                        <span className='text-sm text-muted-foreground'>Starts at</span>
 
                     <p className=' font-bold'>{readableTime}</p>
                     </div>
@@ -119,7 +119,7 @@ export default async function Page({ params }: PageProps) {
 
                     />
                 </div>
-                <div className='col-span-1 '>
+                <div className='col-span-2 md:col-span-1 w-full '>
 
 
                 <RidePassengers rideId={ride.id} />

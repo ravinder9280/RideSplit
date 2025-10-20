@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { Button } from './ui/button'
-import { Search, Car, CarFront, PlusCircle, Bell, Plus } from 'lucide-react'
+import { Search, Car, CarFront, PlusCircle, Bell, Plus, Home, User } from 'lucide-react'
 
 import {
     NavigationMenu,
@@ -12,7 +12,7 @@ import {
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { usePathname } from 'next/navigation'
-import { UserButton, useUser } from '@clerk/nextjs'
+import {  useUser } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
 import NotificationBadge from './common/NotificationBadge'
 import MobileNav from './mobile-sheet'
@@ -33,17 +33,15 @@ export const NavItems = [
 
 ]
 const mobileSheetItems = [
+    { label: "Home", href: "/", icon: Home, image: '/car-check.png' },
     { label: "Explore Rides", href: "/rides", icon: Search, image: '/car-check.png' },
     { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true, image: '/car-plus.png' },
     { label: "My Rides", href: "/rides/my", icon: Car, image: '/phone-car.png' },
     { label: "Requests", href: "/requests", icon: Bell, image: '/phone-car.png' },
+    { label: "Profile", href: "/profile", icon: User, image: '/car-check.png' },
+
 ]
-const userButtonAppearance = {
-    elements: {
-        userButtonAvatarBox: "border border-primary/50", // Custom width and height
-        userButtonPopoverActionButton: "text-primary", // Custom text color for action buttons
-    },
-};
+
 
 const Navbar = () => {
     const { user } = useUser()
@@ -108,10 +106,17 @@ const Navbar = () => {
                       
                       
                   </div>
-                  <div className='flex items-center pl-6 gap-5 md:gap-6'>
+                  <div className='flex items-center pl-6 '>
 
                       {
                           user ? <div className='flex items-center  gap-4 md:gap-6'>
+                              <Link href={'/rides'}>
+                                  < Avatar className='size-9 hover:bg-muted rounded-full '>
+                         <AvatarFallback className='rounded-sm '>
+                                <Search strokeWidth={1} className='size-6 ' />
+                            </AvatarFallback>
+                            </Avatar>
+                              </Link>
                               <Link href={'/ride/new'}>
                                   < Avatar className='size-9 hover:bg-muted rounded-full '>
                          <AvatarFallback className='rounded-sm '>
@@ -124,7 +129,6 @@ const Navbar = () => {
                                   </Link>
                               
                               
-                              <UserButton appearance={userButtonAppearance} />
                           </div> 
                               :
                               <Button  asChild >

@@ -21,6 +21,7 @@ export function SeatSelector({ min = 1, max = 6 ,name}: { min?: number; max?: nu
                 name={name||"seats"}
                 value={seats}
                 readOnly
+                autoFocus={false}
                 className="w-12 h-12  bg-transparent text-2xl md:text-2xl outline-none focus-visible:ring-0 font-bold text-center"
             />
             <Button className=" h-12 w-12 border-none bg-muted/20 " size={'icon'} type="button" variant="outline" onClick={increment} disabled={seats >= max}>

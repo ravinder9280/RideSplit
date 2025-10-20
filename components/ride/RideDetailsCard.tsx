@@ -237,7 +237,9 @@ export function RideDetailsCard({
                                     </Button>
                                 </DialogTrigger>
 
-                                <DialogContent showCloseButton={false} forceMount className="sm:max-w-[425px] z-[1000]">
+                                    <DialogContent onOpenAutoFocus={(e) => {
+                                        e.preventDefault(); // stops Radix from focusing the first focusable element
+                                    }} showCloseButton={false} forceMount className="sm:max-w-[425px] z-[1000]">
                                     <DialogHeader>
                                         <div className="flex justify-between">
                                             <div className="flex items-center gap-2">
@@ -275,7 +277,7 @@ export function RideDetailsCard({
 
                                             <div className="grid mt-4 gap-3">
                                                 <input type="hidden" name="rideId" value={String(rideId)} />
-                                                <Label className="text-sm text-muted-foreground" htmlFor="seats">Number Of Seats</Label>
+                                                <Label className="text-sm text-muted-foreground" htmlFor="seats">Number of seats</Label>
                                                 <SeatSelector min={1} max={seatsAvailable} />
                                             </div>
                                         </div>

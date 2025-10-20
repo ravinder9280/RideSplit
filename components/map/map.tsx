@@ -81,23 +81,23 @@ export default function MapLine({
         }
 
         // from marker
-        if (!fromMarkerRef.current) {
-            fromMarkerRef.current = new mapboxgl.Marker({ color: '#FDD518' })
-                .setLngLat([from.lng, from.lat])
-                .addTo(mapRef.current);
-        } else {
-            fromMarkerRef.current.setLngLat([from.lng, from.lat]);
-        }
-
-        // to marker
         if (!toMarkerRef.current) {
-            const toEl = document.createElement('div');
-            toEl.className = 'h-3 w-3 bg-white rounded-full border-2 shadow';
-            toMarkerRef.current = new mapboxgl.Marker({ element: toEl })
+            toMarkerRef.current = new mapboxgl.Marker({ color: '#FDD518' })
                 .setLngLat([to.lng, to.lat])
                 .addTo(mapRef.current);
         } else {
             toMarkerRef.current.setLngLat([to.lng, to.lat]);
+        }
+
+        // to marker
+        if (!fromMarkerRef.current) {
+            const toEl = document.createElement('div');
+            toEl.className = 'h-3 w-3 bg-white rounded-full border-2 shadow';
+            fromMarkerRef.current = new mapboxgl.Marker({ element: toEl })
+                .setLngLat([from.lng, from.lat])
+                .addTo(mapRef.current);
+        } else {
+            fromMarkerRef.current.setLngLat([from.lng, from.lat]);
         }
 
         // fit bounds
