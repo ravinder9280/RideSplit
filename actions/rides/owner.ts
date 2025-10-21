@@ -4,6 +4,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { sendEmail } from "@/lib/email/email";
+import { RequestDecisionRiderEmail } from "@/lib/email/RequestDecisionRider";
+import { render } from "@react-email/render";
 
 const idSchema = z.object({ memberId: z.string().min(1) });
 
@@ -39,6 +42,24 @@ export async function acceptRequest(memberID: string) {
             data: { status: "ACCEPTED" },
         });
     });
+    const rider = await prisma.user.findUnique({
+        where: { id: member.userId },
+        select: { email: true, name: true },
+    });
+
+    if (rider?.email) {
+        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
+        void sendEmail({
+            to: rider.email,
+            subject: "Your ride request was accepted",
+            html: await render(RequestDecisionRiderEmail({
+                riderName: rider.name,
+                status: "ACCEPTED",
+                rideUrl,
+            })),
+        });
+    }
+
 
     return { ok: true, member: updated };
 }
@@ -64,6 +85,24 @@ export async function declineRequest(memberID:string) {
         where: { id: member.id },
         data: { status: "DECLINED" },
     });
+    //send email
+    const rider = await prisma.user.findUnique({
+        where: { id: member.userId },
+        select: { email: true, name: true },
+    });
+    if (rider?.email) {
+        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
+        void sendEmail({
+            to: rider.email,
+            subject: "Your ride request was declined",
+            html: await render(RequestDecisionRiderEmail({
+                riderName: rider.name,
+                status: "DECLINED",
+                rideUrl,
+            })),
+        });
+    }
+
 
     return { ok: true, member: updated };
 }

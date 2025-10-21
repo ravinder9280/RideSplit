@@ -3,7 +3,9 @@
 import {  currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-
+import { sendEmail } from "@/lib/email/email";
+import { NewRequestOwnerEmail } from "@/lib/email/NewRequestOwner";
+import { render } from "@react-email/render";
 const schema = z.object({
     rideId: z.string().min(1),
     seats: z.coerce.number().int().min(1).max(8),
@@ -55,6 +57,29 @@ export async function requestRide(formData: FormData) {
         },
     });
     console.log(member)
+    const owner = await prisma.user.findUnique({
+        where: { clerkId: ride.owner.clerkId },
+        select: { email: true, name: true },
+    });
+    const rider = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { name: true },
+    });
+
+    if (owner?.email) {
+        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/requests`;
+        void sendEmail({
+            to: owner.email,
+            subject: "New ride request",
+            html: await render (NewRequestOwnerEmail({
+                ownerName: owner.name,
+                riderName: rider?.name,
+                seats,
+                rideUrl,
+            })),
+        });
+    }
+
 
     return { ok: true, member,message:"Request Sent Successfully" };
 }
