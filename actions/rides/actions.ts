@@ -41,10 +41,11 @@ try {
     });
     revalidatePath("/rides");
     return { ok: true };
-} catch (error: any) {
+} catch (error) {
+    console.error(error instanceof Error ? error.message : "Unknown error");
     return {
         ok: false,
-        message:error.message
+        message:error instanceof Error ? error.message : "Unknown error"
     }
 
     

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { sendEmail } from "@/lib/email/email";
 import { NewRequestOwnerEmail } from "@/lib/email/NewRequestOwner";
 import { render } from "@react-email/render";
+import { revalidatePath } from "next/cache";
 const schema = z.object({
     rideId: z.string().min(1),
     seats: z.coerce.number().int().min(1).max(8),
@@ -23,7 +24,13 @@ export async function requestRide(formData: FormData) {
     if (!parsed.success) return { ok: false, message: "Invalid input" };
 
     const { rideId, seats } = parsed.data;
-
+const alreadyRequested = await prisma.rideMember.findFirst({
+    where: {
+        rideId,
+        userId,
+    },
+});
+if (alreadyRequested) return { ok: false, message: "You Have Already requested for this ride" };
     const ride = await prisma.ride.findUnique({
         where: { id: rideId },
         select: {
@@ -31,7 +38,8 @@ export async function requestRide(formData: FormData) {
             status: true,
             perSeatPrice: true,
             seatsAvailable: true,
-            owner: { select: { clerkId: true } },
+            owner: { select: { id: true, clerkId: true, email: true, name: true } },
+            // include everything you need here
         },
     });
     if (!ride) return { ok: false, message: "Ride not found" };
@@ -39,7 +47,7 @@ export async function requestRide(formData: FormData) {
     if (ride.seatsAvailable < seats) return { ok: false, message: "Not enough seats" };
     if (ride.owner.clerkId === userId) return { ok: false, message: "Cannot request own ride" };
 
-    const user = await prisma.user.findUnique({ where: { clerkId: userId }, select: { id: true } });
+    const user = await prisma.user.findUnique({ where: { clerkId: userId }, select: { id: true, name: true } });
     if (!user) return { ok: false, message: "User missing in DB" };
 
     // Upsert: if user already requested this ride, update seatsRequested/fareShare
@@ -56,30 +64,33 @@ export async function requestRide(formData: FormData) {
             status: "PENDING",
         },
     });
-    console.log(member)
-    const owner = await prisma.user.findUnique({
-        where: { clerkId: ride.owner.clerkId },
-        select: { email: true, name: true },
-    });
-    const rider = await prisma.user.findUnique({
-        where: { id: user.id },
-        select: { name: true },
-    });
 
-    if (owner?.email) {
-        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/requests`;
-        void sendEmail({
-            to: owner.email,
-            subject: "New ride request",
-            html: await render (NewRequestOwnerEmail({
-                ownerName: owner.name,
-                riderName: rider?.name,
-                seats,
-                rideUrl,
-            })),
-        });
+
+
+    try {
+        if (ride.owner.email) {
+            const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/requests`;
+            await sendEmail({
+                to: ride.owner.email,
+                subject: "You Have a New ride request",
+                html: await render(NewRequestOwnerEmail({
+                    ownerName: ride.owner.name,
+                    riderName: user.name || "",
+                    seats: seats,
+                    rideUrl,
+                })),
+            });
+
+        }
+    } catch (error) {
+        console.error(error instanceof Error ? error.message : "Unknown error");
     }
 
+    // Revalidate the ride details page and related pages
+    revalidatePath(`/ride/${rideId}`);
+    revalidatePath('/requests');
+    revalidatePath('/rides');
 
-    return { ok: true, member,message:"Request Sent Successfully" };
+    console.log('Request Sent Successfully', member.status)
+    return { ok: true, message: "Request Sent Successfully" };
 }

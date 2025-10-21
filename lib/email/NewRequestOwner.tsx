@@ -25,7 +25,7 @@ export function NewRequestOwnerEmail(props: {
             <Section className="mt-6">
                 <Button
                     href={rideUrl}
-                    className="rounded bg-black px-4 py-3 text-white no-underline"
+                    className="rounded-md bg-primary px-4 py-3 text-sm text-white no-underline"
                 >
                     Review requests
                 </Button>

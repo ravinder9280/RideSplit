@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRef } from 'react';
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from 'next/navigation';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTrigger } from '../ui/dialog';
@@ -69,6 +70,7 @@ export function RideDetailsCard({
     memberStatus?: MemberStatus;
 }) {
     const { user } = useUser();
+    const router = useRouter();
     const closeRef = useRef<HTMLButtonElement>(null);
 
     const isExpired = (() => {
@@ -108,6 +110,8 @@ export function RideDetailsCard({
             const res = await requestRide(formData);
             if (res.ok) {
                 toast.success(res.message || 'Request Sent Successfully');
+                // Refresh the page to show updated member status
+                router.refresh();
             } else {
                 toast.error(res.message || 'Some Error Occurred');
             }

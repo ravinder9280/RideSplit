@@ -4,6 +4,9 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { RequestDecisionRiderEmail } from "@/lib/email/RequestDecisionRider";
+import { sendEmail } from "@/lib/email/email";
+import { render } from "@react-email/render";
 
 const idSchema = z.object({ memberId: z.string().min(1) });
 
@@ -42,6 +45,23 @@ export async function cancelMyRequest(memberID: string) {
             data: { status: "CANCELLED" },
         });
     }
+    try {
+        if (member.user.email) {
+            const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
+            await sendEmail({
+                to: member.user.email,
+                subject: "Ride Request Cancelled",
+                html: await render(RequestDecisionRiderEmail({
+                    riderName: member.user.name,
+                    status: "CANCELLED",
+                    rideUrl,
+                })),
+            });
+        }
+    } catch (error) {
+        console.error(error instanceof Error ? error.message : "Unknown email error");
+    }
+    console.log('Request Cancelled Successfully',member.status)
 
-    return { ok: true };
+    return { ok: true,message:"Request Cancelled Successfully" };
 }

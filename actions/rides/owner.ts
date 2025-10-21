@@ -25,7 +25,7 @@ export async function acceptRequest(memberID: string) {
     });
     if (!member) return { ok: false, message: "Not found" };
     if (member.ride.owner.clerkId !== userId) return { ok: false, message: "Not your ride" };
-    if (member.status !== "PENDING") return { ok: false, message: "Not pending" };
+    if (member.status !== "PENDING") return { ok: false, message: "Request is not pending" };
 
     // ensure enough seats still available
     if (member.ride.seatsAvailable < member.seatsRequested) {
@@ -46,22 +46,27 @@ export async function acceptRequest(memberID: string) {
         where: { id: member.userId },
         select: { email: true, name: true },
     });
+    try {
+        if (rider?.email) {
+            const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
+            await sendEmail({
+                to: rider.email,
+                subject: "Good news! 🎉 Your ride request was accepted",
+                html: await render(RequestDecisionRiderEmail({
+                    riderName: rider.name,
+                    status: "ACCEPTED",
+                    rideUrl,
+                })),
+            });
+        }
+    
+} catch (error) {
+    console.error(error instanceof Error ? error.message : "Unknown email error");
+}
+   
+    console.log('Request Accepted Successfully',updated.status)
 
-    if (rider?.email) {
-        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
-        void sendEmail({
-            to: rider.email,
-            subject: "Your ride request was accepted",
-            html: await render(RequestDecisionRiderEmail({
-                riderName: rider.name,
-                status: "ACCEPTED",
-                rideUrl,
-            })),
-        });
-    }
-
-
-    return { ok: true, member: updated };
+    return { ok: true, member: updated,message:"Request Accepted Successfully" };
 }
 
 export async function declineRequest(memberID:string) {
@@ -79,7 +84,7 @@ export async function declineRequest(memberID:string) {
     });
     if (!member) return { ok: false, message: "Not found" };
     if (member.ride.owner.clerkId !== userId) return { ok: false, message: "Not your ride" };
-    if (member.status !== "PENDING") return { ok: false, message: "Not pending" };
+    if (member.status !== "PENDING") return { ok: false, message: "Request is not pending" };
 
     const updated = await prisma.rideMember.update({
         where: { id: member.id },
@@ -90,19 +95,28 @@ export async function declineRequest(memberID:string) {
         where: { id: member.userId },
         select: { email: true, name: true },
     });
-    if (rider?.email) {
-        const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
-        void sendEmail({
-            to: rider.email,
-            subject: "Your ride request was declined",
-            html: await render(RequestDecisionRiderEmail({
-                riderName: rider.name,
-                status: "DECLINED",
-                rideUrl,
-            })),
-        });
+    try {
+        if (rider?.email) {
+            const rideUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/ride/${member.rideId}`;
+            void sendEmail({
+                to: rider.email,
+                subject: "Your ride request was declined",
+                html: await render(RequestDecisionRiderEmail({
+                    riderName: rider.name,
+                    status: "DECLINED",
+                    rideUrl,
+                })),
+            });
+        }
+    
+    } catch (error) {
+    console.error(error instanceof Error ? error.message : "Unknown email error");
+    
     }
+    
+    console.log('Request Declined Successfully',updated.status)
+    
 
 
-    return { ok: true, member: updated };
+    return { ok: true, member: updated,message:"Request Declined Successfully" };
 }

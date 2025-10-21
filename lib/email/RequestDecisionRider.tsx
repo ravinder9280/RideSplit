@@ -1,33 +1,34 @@
 // emails/RequestDecisionRider.tsx
 import * as React from "react";
-import { Button, Heading, Hr, Link, Section, Text } from "@react-email/components";
+import { Button, Hr, Link, Section, Text } from "@react-email/components";
 import { EmailLayout } from "./layout";
 
 export function RequestDecisionRiderEmail(props: {
     riderName?: string | null;
-    status: "ACCEPTED" | "DECLINED";
+    status: "ACCEPTED" | "DECLINED" | "CANCELLED";
     rideUrl: string;
 }) {
     const { riderName, status, rideUrl } = props;
     const positive = status === "ACCEPTED";
 
     return (
-        <EmailLayout preview={positive ? "Your request was accepted" : "Your request was declined"}>
-            <Heading as="h2" className="text-xl font-semibold">
-                {positive ? "Good news! 🎉" : "Update on your request"}
-            </Heading>
+        <EmailLayout preview={positive ? "Your request was accepted" : status === "DECLINED" ? "Your request was declined" : "Your request was cancelled"}>
+            <Text style={title}>
+                <strong>{riderName ?? ""}</strong>, {positive ? "Good news! 🎉" : "Update on your request"}
+            </Text>
 
-            <Text className="mt-2">
-                Hi {riderName ?? "there"}, your ride request was{" "}
+            <Section style={section}>
+                <Text style={text}>
+
+                Hey <strong>{riderName ?? "there"}</strong>, your ride request was{" "}
                 <b className={positive ? "text-green-600" : "text-red-600"}>
                     {status.toLowerCase()}
                 </b>.
-            </Text>
+                </Text>
 
-            <Section className="mt-6">
                 <Button
                     href={rideUrl}
-                    className="rounded bg-black px-4 py-3 text-white no-underline"
+                className="rounded-md bg-primary px-4 py-3 text-sm text-white no-underline"
                 >
                     Open ride
                 </Button>
@@ -40,3 +41,17 @@ export function RequestDecisionRiderEmail(props: {
         </EmailLayout>
     );
 }
+const title = {
+    fontSize: '24px',
+    lineHeight: 1.25,
+};
+const section = {
+    padding: '24px',
+    border: 'solid 1px #dedede',
+    borderRadius: '5px',
+    textAlign: 'center' as const,
+};
+const text = {
+    margin: '0 0 10px 0',
+    textAlign: 'left' as const,
+};
