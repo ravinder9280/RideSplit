@@ -20,8 +20,8 @@ const qSchema = z.object({
     seats: z.coerce.number().int().min(1).default(1),
     service: z.enum(['UBER', 'OLA']).optional(),
     verifiedOnly: z.coerce.boolean().optional(),
-    sort: z.enum(['time', 'price', 'distance']).default('time'),
-    radiusKm: z.coerce.number().min(1).max(100).default(10), // 👈 NEW
+    sort: z.enum(['time', 'price', 'distance','created']).default('created'),
+    radiusKm: z.coerce.number().min(1).max(100).default(10), 
     page: z.coerce.number().int().min(1).default(1),
     pageSize: z.coerce.number().int().min(1).max(50).default(50),
 });
@@ -100,8 +100,11 @@ export async function GET(req: NextRequest) {
         if (andFilters.length) where.AND = andFilters;
 
         // default DB ordering of
-        let orderBy: Prisma.RideOrderByWithRelationInput[] = [{ departureAt: 'asc' }];
+        let orderBy: Prisma.RideOrderByWithRelationInput[] = [{ createdAt: 'desc' }];
         if (sort === 'price') orderBy = [{ perSeatPrice: 'asc' }, { departureAt: 'asc' }];
+        if (sort === 'time') orderBy = [{ departureAt: 'asc' }];
+        if(sort==='created') orderBy=[{createdAt:'desc'}]
+
 
         const skip = (page - 1) * pageSize;
 
@@ -109,9 +112,7 @@ export async function GET(req: NextRequest) {
         const [rawItems, totalDb] = await Promise.all([
             prisma.ride.findMany({
                 where,
-                orderBy: {
-                    createdAt:'asc'
-                },
+                orderBy,
                 skip,
                 take: pageSize,
                 include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
@@ -148,10 +149,11 @@ export async function GET(req: NextRequest) {
         });
     
 }
-    catch (error:any) {
+    catch (error) {
+        
         return NextResponse.json({
             ok: false,
-            message: error.message,  
+            message: error instanceof Error ? error.message : "Unknown error"  
         },{status:500});
     
 }

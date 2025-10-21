@@ -11,7 +11,7 @@ const LatestRides = async () => {
     const proto = h.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
     const base = `${proto}://${host}`;
 
-    const res = await fetch(`${base}/api/rides/search?pageSize=${pageSize}`);
+    const res = await fetch(`${base}/api/rides/search?pageSize=${pageSize} `);
     if (!res.ok) {
         const text = await res.text().catch(() => "");
         throw new Error(`Nearby fetch ${res.status}: ${text}`);
