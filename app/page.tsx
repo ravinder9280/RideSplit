@@ -4,8 +4,8 @@ import AllowLocationBanner from "@/components/common/AllowLocationBanner"; // cl
 import MobileTabs from "@/components/Mobile-Tabs";
 import { ListSkeleton } from "@/components/common/ListSkeleton";
 import { Suspense } from "react";
-import LocationNavigator from "@/components/common/LoacationNavigator";
 import LatestRides from "@/components/ride/latest-rides";
+import { HomeCarousel } from "@/components/HomeCarousel";
 export default async function HomePage({
   searchParams,
 }: {
@@ -23,7 +23,7 @@ export default async function HomePage({
   return (
     <main className="max-w-7xl mx-auto  space-y-6">
       {denied && <AllowLocationBanner />}
-     <LocationNavigator/>
+      <HomeCarousel/>
       <MobileTabs />
       <LocationInit />
 

@@ -12,7 +12,7 @@ import {
     NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { usePathname } from 'next/navigation'
-import {  useUser } from '@clerk/nextjs'
+import {  UserButton, useUser } from '@clerk/nextjs'
 import { cn } from '@/lib/utils'
 import NotificationBadge from './common/NotificationBadge'
 import MobileNav from './mobile-sheet'
@@ -126,7 +126,11 @@ const Navbar = () => {
                               </Link>
                                   <Link href={'/requests'}>
                                   <NotificationBadge/>
-                                  </Link>
+                              </Link>
+                              <div className='hidden md:block'>
+                                  
+                              <UserButton/>
+                              </div>
                               
                               
                           </div> 

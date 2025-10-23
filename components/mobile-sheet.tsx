@@ -73,7 +73,9 @@ const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: st
                 <SheetFooter>
                     <div className='px-4 py-2 border-t flex items-center w-full justify-between'>
                         <div className='flex items-center w-full justify-start '>
-                            {userId?
+                            {userId ?
+                                <div> 
+
 
                                 <SheetClose>
 
@@ -87,7 +89,8 @@ const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: st
                                     <LogOut  className='size-6' size={24} />
                                 </Button>
                             </SignOutButton>
-                                </SheetClose> :
+                                </SheetClose>  
+                                        </div>:
                                 <SheetClose  asChild>
 
                                 <Button variant={'outline'} asChild >

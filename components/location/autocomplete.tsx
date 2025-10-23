@@ -10,9 +10,9 @@ import {
   CommandInput,
 } from "@/components/ui/command";
 import { Input } from "../ui/input";
-import { ChevronRight, MapPin } from "lucide-react";
+import { ChevronRight} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
+import { Spinner } from "../ui/spinner";
 
 export type Props = {
   label?: string;
@@ -127,7 +127,9 @@ export default function MapboxAutocomplete({
         {showList && (
           <CommandList className="max-h-screen">
             {loading &&query.length>0&& (
-              <div className="py-3 text-sm text-muted-foreground text-center">Searching…</div>
+              <div className="py-3 text-sm text-muted-foreground w-full flex items-center justify-center text-center">
+                <Spinner />
+              </div>
             )}
 
             {!loading && (

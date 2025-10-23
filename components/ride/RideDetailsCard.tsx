@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
 import { Badge } from '../ui/badge';
@@ -72,6 +72,7 @@ export function RideDetailsCard({
     const { user } = useUser();
     const router = useRouter();
     const closeRef = useRef<HTMLButtonElement>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const isExpired = (() => {
         if (!startsAt) return false;
@@ -85,13 +86,14 @@ export function RideDetailsCard({
     })();
 
     const isRequestDisabled =
-        isExpired || user?.id === owner?.clerkId || status !== "ACTIVE" || memberStatus === 'PENDING' || seatsAvailable <= 0;
+        isExpired || user?.id === owner?.clerkId || status !== "ACTIVE" || memberStatus === 'PENDING' || seatsAvailable <= 0 || isSubmitting;
 
     function SubmitButton() {
         const { pending } = useFormStatus();
+        const isDisabled = pending || isSubmitting;
         return (
-            <Button disabled={pending} type="submit">
-                {pending ? (
+            <Button disabled={isDisabled} type="submit">
+                {isDisabled ? (
                     <div className="flex items-center gap-2">
                         <span className="animate-spin h-4 w-4 rounded-full border-2 border-current border-t-transparent" />
                         Sending Request...
@@ -106,6 +108,9 @@ export function RideDetailsCard({
     }
 
     async function clientAfterSubmit(formData: FormData) {
+        if (isSubmitting) return; // Prevent multiple submissions
+
+        setIsSubmitting(true);
         try {
             const res = await requestRide(formData);
             if (res.ok) {
@@ -119,6 +124,8 @@ export function RideDetailsCard({
         } catch (e) {
             const message = e instanceof Error ? e.message : 'Failed to send request';
             toast.error(message);
+        } finally {
+            setIsSubmitting(false);
         }
     }
 
