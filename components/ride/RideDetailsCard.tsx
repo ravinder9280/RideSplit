@@ -130,7 +130,7 @@ export function RideDetailsCard({
     }
 
     return (
-        <Card className=' rounded-none '>
+        <Card className='  bg-muted/20  '>
             <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                     <h2>Ride Details</h2>

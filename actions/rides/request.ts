@@ -1,6 +1,6 @@
 "use server";
 
-import {  currentUser } from "@clerk/nextjs/server";
+import {  auth} from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { sendEmail } from "@/lib/email/email";
@@ -14,15 +14,19 @@ const schema = z.object({
 
 export async function requestRide(formData: FormData) {
     try {
-        const clerkUser = await currentUser();
-        const userId = clerkUser?.id
-        if (!userId) return { ok: false, message: "Not signed in" };
 
+         const { userId } = await auth();
+        if (!userId) return { ok: false, message: "Unauthorized" };
+       
         const parsed = schema.safeParse({
             rideId: formData.get("rideId"),
             seats: formData.get("seats"),
         });
-        if (!parsed.success) return { ok: false, message: "Invalid input" };
+        if (!parsed.success) {
+            const error =z.treeifyError(parsed.error)
+            
+            return { ok: false, message: error.errors[0]||"Invalid Inputs" };
+        }
 
         const { rideId, seats } = parsed.data;
 

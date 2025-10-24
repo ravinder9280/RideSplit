@@ -3,7 +3,7 @@ import React from 'react'
 
 const RidePin = ({ fromText, toText, lineClampClass }: { fromText: string, toText: string, lineClampClass?: string }) => {
     return (
-        <div className="py-2 flex">
+        <div className=" flex">
             <div className="relative mr-3 flex w-6 flex-col items-center">
                 <span className="mt-1 inline-block h-4 w-4 rounded-full border-[6px] bg-white" />
                 <span className=" block h-1/2 w-0.5 bg-muted-foreground" />

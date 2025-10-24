@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
                 orderBy,
                 skip,
                 take: pageSize,
-                include: { owner: { select: { name: true, imageUrl: true, rating: true } } },
+                include: { owner: { select: { name: true, imageUrl: true, rating: true,id:true } } },
             }),
             prisma.ride.count({ where }),
         ]);

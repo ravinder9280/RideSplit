@@ -41,7 +41,7 @@ export async function publishRide(formData: FormData) {
         });
 
         revalidatePath("/rides");
-        return { ok: true };
+        return { ok: true, message: 'Ride Published SuccessFully' };
     } catch (error) {
         console.error("Error in publishRide:", error instanceof Error ? error.message : "Unknown error");
         return {

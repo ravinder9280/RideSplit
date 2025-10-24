@@ -103,7 +103,7 @@ export default function PublishRideForm() {
         // All good — call server action
         const res = await publishRide(formData); // { ok, message?, rideId? }
         if (res?.ok) {
-            toast.success("Ride published!");
+            toast.success(res?.message ?? 'Ride Published Successfully');
             formRef.current?.reset();
             setFormKey((k) => k + 1); // remount to clear MapboxAutocomplete internal state
         } else {

@@ -12,9 +12,21 @@ import {
 import Image from "next/image";
 
 const carouselImages = [
-    { src: '/dummy1.jpg', text: 'Ride sharing made easy' , subText:''},
-    { src: '/dummy2.jpg', text: 'Connect with fellow travelers', subText: ''},
-    { src: '/dummy3.jpg', text: 'Save money, share rides', subText:'' }
+    {
+        src: '/dummy1.png',
+        text: 'Ride sharing made easy',
+        subText: 'Book or offer rides instantly and travel smarter together.'
+    },
+    {
+        src: '/dummy2.jpg',
+        text: 'Connect with fellow travelers',
+        subText: 'Meet people heading your way and enjoy every trip with great company.'
+    },
+    {
+        src: '/dummy3.jpg',
+        text: 'Save money, share rides',
+        subText: 'Cut travel costs while reducing your carbon footprint on every journey.'
+    }
 ];
 
 export function HomeCarousel() {
@@ -105,7 +117,7 @@ export function HomeCarousel() {
                                         {image.text}
                                     </h2>
                                     <p className="text-sm md:text-base text-white/70">
-                                        Join thousands of riders sharing their journey
+                                        {image.subText}
                                     </p>
                                 </div>
                             </div>
