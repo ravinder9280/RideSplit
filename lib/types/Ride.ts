@@ -3,12 +3,12 @@ export type Owner = {
     rating?: number | null,
     name: string | null,
     id?: string ,
-    email?: string ,
+    email?: string | null,
     clerkId?: string | number,
     phone?:string |null
 }
 export interface Ride {
-    id?:string,
+    id: string,
     fromText: string
     fromLat: number
     fromLng: number
@@ -16,12 +16,12 @@ export interface Ride {
     toLat: number
     toLng: number
     departureAt: string | Date
-    seatsTotal: number
-    estTotalFare: number
+    seatsTotal?: number
+    estTotalFare?: number
     perSeatPrice:number
-    service: "UBER" | "OLA"
+    service?: "UBER" | "OLA" | "OWNER"
     owner?:  Owner , 
-    seatsAvailable : number
+    seatsAvailable?: number
 
 
 }
