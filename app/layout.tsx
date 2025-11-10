@@ -52,7 +52,7 @@ export default function RootLayout({
               {children}
               </main>        </>
         </ThemeProvider>
-        <div className="fixed bottom-[84px] right-4 z-40" >
+        <div className="fixed bottom-16 md:bottom-20 right-4 z-40" >
           <button  className="rounded-full bg-primary p-3 flex items-center text-black justify-center">
             <Bot className="h-8 w-8"/>
           </button>
