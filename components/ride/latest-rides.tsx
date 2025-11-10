@@ -21,7 +21,7 @@ const LatestRides = async () => {
     if (items.length === 0) return null;
 
   return (
-      <section className="space-y-3">
+      <section className="space-y-3 mx-auto container xl:p-0">
           <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold">Latest Rides</h2>
               

@@ -4,7 +4,7 @@ import { Skeleton } from "../ui/skeleton";
 export function ListSkeleton({ size=6 }: { size?: number }) {
     const s=size ?? 6
     return (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 mx-auto container xl:p-0 lg:grid-cols-3">
             {[...Array(s)].map((_, i) => (
                 <div className="w-full space-y-4  p-4 bg-secondary rounded-md" key={i}>
                     <div className="flex w-full  justify-between">

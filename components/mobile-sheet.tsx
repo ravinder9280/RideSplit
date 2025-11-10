@@ -1,14 +1,14 @@
 import React from 'react'
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTrigger } from './ui/sheet'
-import { CarFront, ChevronRight, LogOut, Menu, X } from 'lucide-react'
+import { CarFront, ChevronRight, Menu, X } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import ThemeSwitch from './ui/theme-switch'
-import { Button } from './ui/button'
-import { SignOutButton, useAuth } from '@clerk/nextjs'
+ 
+import UserMobileActions from './auth/UserMobileActions'
 
 const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: string, href: string, icon: React.ElementType }[], pathname: string }) => {
-    const { userId } = useAuth();     
+        
 
 
     return (
@@ -73,34 +73,7 @@ const MobileNav = ({ navigationItems, pathname }: { navigationItems: { label: st
                 <SheetFooter>
                     <div className='px-4 py-2 border-t flex items-center w-full justify-between'>
                         <div className='flex items-center w-full justify-start '>
-                            {userId ?
-                                <div> 
-
-
-                                <SheetClose>
-
-                            <SignOutButton redirectUrl="/sign-in">
-                                <Button variant={'ghost'}
-                                    className="   text-red-500   "                        >
-                                    <span className=''>
-
-                                        Logout
-                                    </span>
-                                    <LogOut  className='size-6' size={24} />
-                                </Button>
-                            </SignOutButton>
-                                </SheetClose>  
-                                        </div>:
-                                <SheetClose  asChild>
-
-                                <Button variant={'outline'} asChild >
-                                    <Link href={'/sign-in'}>
-
-                                        SignIn
-                                    </Link>
-                                </Button>
-                                </SheetClose>
-                            }
+                            <UserMobileActions />
                         </div>
                         <div className=''>
 

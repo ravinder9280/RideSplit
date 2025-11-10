@@ -21,7 +21,7 @@ const UserPage =  async ({params}:{params:{id:string}}) => {
     console.log(user?.memberships)
 
   return (
-      <div className='p-2 max-w-5xl mx-auto flex flex-col gap-4'>
+      <div className='p-2 mx-auto container xl:p-0 flex flex-col gap-4'>
           <div className='flex items-center gap-2'>
               <div className='rounded-full ring-2 ring-primary'>
                   <Image className='rounded-full h-24' src={user?.imageUrl||''} alt='hello' height={96} width={96}/>
@@ -61,7 +61,7 @@ const UserPage =  async ({params}:{params:{id:string}}) => {
 
                   
               </div>
-              <div className="grid gap-4 md:grid-cols-2 ">
+              <div className="grid gap-4 sm:gap-5 md:gap-6 md:grid-cols-2 lg:grid-cols-3 ">
                   {
                       user?.rides && user.rides.length > 0 && user.rides.map((ride: Ride) => (
                           <RideCard key={ride.id} r={ride} />

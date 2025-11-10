@@ -9,7 +9,7 @@ export default async function RidesPage({
 }) {
     // pass-through; client will control URL updates
     return (
-        <main className="min-h-screen py-4 max-w-[1400px] mx-auto md:p-0 ">
+        <main className="min-h-screen py-4  mx-auto container xl:p-0 md:p-0 ">
             <RideSearchClient initialQuery={searchParams} />
             <section className="mt-6">
                 <Suspense fallback={<ListSkeleton />}>

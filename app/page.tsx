@@ -21,7 +21,7 @@ export default async function HomePage({
   const denied = get("loc") === "denied";
 
   return (
-    <main className="max-w-7xl mx-auto  space-y-6">
+    <main className=" mx-auto  space-y-6">
       {denied && <AllowLocationBanner />}
       <HomeCarousel/>
       <MobileTabs />

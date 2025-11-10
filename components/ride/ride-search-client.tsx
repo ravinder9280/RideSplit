@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 import LocationDialogInput from "../common/LocationDialogInput";
 import { Spinner } from "../ui/spinner";
 
-export default function RideSearchClient({ initialQuery }: { initialQuery: Record<string, any> }) {
+export default function RideSearchClient({ }: { initialQuery: Record<string, any> }) {
     const router = useRouter();
     const sp = useSearchParams();
     const [pending, startTransition] = useTransition();
@@ -58,7 +58,7 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
     return (
         <div className="w-full flex-col gap-8 flex items-center justify-center">
             
-            <div className="rounded-xl w-full lg:max-w-7xl  bg-secondary p-4">
+            <div className="rounded-xl w-full lg:max-w-6xl  bg-secondary p-4">
                 <div className="mb-4 space-y-1">
 
                     <h2 className="text-xl text-primary/80 font-semibold md:text-4xl">Find a Ride</h2>
@@ -78,6 +78,8 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
 
             <div className="mt-3 grid gap-3 grid-cols-2 md:grid-cols-3">
                 <div className="col-span-3 md:col-span-1">
+                <label className="block text-sm font-medium mb-1">Date</label>
+
                     <Input type="date" className="text-muted-foreground" value={date} onChange={(e) => setDate(e.target.value)} />
                     </div>
                     
@@ -92,10 +94,11 @@ export default function RideSearchClient({ initialQuery }: { initialQuery: Recor
                             <SelectItem value="evening">Evening</SelectItem>
                         </SelectContent>
                     </Select>
-                </div>
-                <div>
+                    </div>
+
+                <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Seats needed</label>
-                    <Input type="number" min={1} max={8} value={seats} onChange={(e) => setSeats(e.target.value)} />
+                    <Input className="w-full" type="number" min={1} max={8} value={seats} onChange={(e) => setSeats(e.target.value)} />
                 </div>
             </div>
 

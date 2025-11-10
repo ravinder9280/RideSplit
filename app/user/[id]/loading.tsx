@@ -4,7 +4,7 @@ import React from 'react'
 
 const UserProfileSkeleton = () => {
   return (
-      <div className='p-2 inset-0 max-w-7xl mx-auto flex h-[calc(100vh-4rem)] overflow-hidden flex-col gap-6'>
+      <div className='p-2 inset-0 container xl:p-0 mx-auto flex h-[calc(100vh-4rem)] overflow-hidden flex-col gap-6'>
           <div className="flex flex-col max-w-3xl justify-center  space-y-4">
 
               <div className="flex items-center space-x-4">

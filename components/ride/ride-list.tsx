@@ -66,18 +66,21 @@ async function RideListContent({
     };
 
     // Determine if user applied any filters beyond defaults
-    hasFilters = !!(
-        get("fromLat") ||
-        get("fromLng") ||
-        get("toLat") ||
-        get("toLng") ||
-        get("date") ||
-        get("service") ||
-        get("verifiedOnly"),
-        get('sort')
-    ) ||
-        !!(get("window") && get("window") !== "any") ||
-        !!(get("seats") && get("seats") !== "1");
+    hasFilters =
+        Boolean(
+            get("fromLat") ||
+            get("fromLng") ||
+            get("toLat") ||
+            get("toLng") ||
+            get("fromText") ||
+            get("toText") ||
+            get("date") ||
+            get("service") ||
+            get("verifiedOnly") ||
+            get("sort")
+        ) ||
+        Boolean(get("window") && get("window") !== "any") ||
+        Boolean(get("seats") && get("seats") !== "1");
 
     // Handle error state
     if (error) {
@@ -108,7 +111,7 @@ async function RideListContent({
                     <h3 className="font-medium">
                         {hasFilters ? "Search results" : "Available rides"}
                     </h3>
-                    { <ClearFiltersButton basePath="/rides" />}
+                    {hasFilters && <ClearFiltersButton basePath="/rides" />}
                 </div>
                 <div className="rounded-xl border p-8 text-center text-muted-foreground">
                     {hasFilters ? (

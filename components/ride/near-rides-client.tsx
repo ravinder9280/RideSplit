@@ -25,7 +25,7 @@ export default function NearRidesClient({
     if (!rides) return null; // no rides or error-only
 
     return (
-        <section className="space-y-3">
+        <section className="space-y-3 mx-auto container xl:p-0">
             <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold">Nearby Rides</h2>
                 {rides.length > (pageSize ?? 6) && (

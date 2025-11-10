@@ -27,7 +27,7 @@ export default function AllowLocationBanner() {
     };
 
     return (
-        <div className="rounded-lg border bg-muted/60 p-3 flex items-center justify-between">
+        <div className="rounded-lg max-w-3xl mx-auto border bg-muted/60 p-3 flex items-center justify-between">
             <p className="text-sm">
                 We’d like to use your location to show nearby rides.
             </p>

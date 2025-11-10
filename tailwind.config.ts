@@ -12,8 +12,22 @@ const config: Config = {
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",
 		"./app/**/*.{js,ts,jsx,tsx,mdx}",
 	],
+	
 	theme: {
+		
+		
 		extend: {
+			screens: {
+				'xl': '1440px', 
+			  },
+			container:{
+
+			screens:{
+
+				xl:'1400px',
+			}
+
+			},
 			colors: {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
