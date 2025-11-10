@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Button } from './ui/button'
 import { Search, Car, CarFront, PlusCircle, Bell, Plus, Home, User } from 'lucide-react'
 
@@ -17,41 +17,42 @@ import { cn } from '@/lib/utils'
 import NotificationBadge from './common/NotificationBadge'
 import MobileNav from './mobile-sheet'
 import { Avatar, AvatarFallback } from './ui/avatar'
-
-export const NavItems = [
+import { useCurrentUserId } from '@/hooks/useCurrentUserId'
+const navItems = [
     { label: "Home", href: "/" },
     { label: "Ask AI", href: "/ai" },
-
     {
         label: "Rides",
         children: [
-            { label: "Explore Rides", href: "/rides", icon: Search,image: '/car-check.png' },
-            { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true,image:'/car-plus.png' },
-            { label: "My Rides", href: "/rides/my", icon: Car,image:'/phone-car.png' },
+            { label: "Explore Rides", href: "/rides", icon: Search, image: '/car-check.png' },
+            { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true, image: '/car-plus.png' },
+            { label: "My Rides", href: "/rides/my", icon: Car, image: '/phone-car.png' },
         ],
     },
-
 ]
-const mobileSheetItems = [
-    { label: "Home", href: "/", icon: Home, image: '/car-check.png' },
-    { label: "Explore Rides", href: "/rides", icon: Search, image: '/car-check.png' },
-    { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true, image: '/car-plus.png' },
-    { label: "My Rides", href: "/rides/my", icon: Car, image: '/phone-car.png' },
-    { label: "Requests", href: "/requests", icon: Bell, image: '/phone-car.png' },
-    { label: "Profile", href: "/profile", icon: User, image: '/car-check.png' },
-
-]
-
 
 const Navbar = () => {
     const { user } = useUser()
-  const pathname = usePathname()    
-  return (
-      <header className='fixed top-0 left-0 right-0 z-[998] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
-          <div className='w-full container mx-auto sm:px-6 md:px-12 lg:px-24 xl:px-0 px-4'>
-              <div className='flex items-center h-16'>
-                  <div className='flex-1 flex items-center gap-4'>
-                      <MobileNav navigationItems={mobileSheetItems} pathname={ pathname} />
+    const { userId } = useCurrentUserId()
+    const pathname = usePathname()
+    
+   
+
+    const mobileSheetItems = useMemo(() => [
+        { label: "Home", href: "/", icon: Home, image: '/car-check.png' },
+        { label: "Explore Rides", href: "/rides", icon: Search, image: '/car-check.png' },
+        { label: "Post a Ride", href: "/ride/new", icon: PlusCircle, cta: true, image: '/car-plus.png' },
+        { label: "My Rides", href: "/rides/my", icon: Car, image: '/phone-car.png' },
+        { label: "Requests", href: "/requests", icon: Bell, image: '/phone-car.png' },
+        { label: "Profile", href: userId ? `/user/${userId}` : "/profile", icon: User, image: '/car-check.png' },
+    ], [userId])
+    
+    return (
+        <header className='fixed top-0 left-0 right-0 z-[998] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
+            <div className='w-full container mx-auto sm:px-6 md:px-12 lg:px-24 xl:px-0 px-4'>
+                <div className='flex items-center h-16'>
+                    <div className='flex-1 flex items-center gap-4'>
+                        <MobileNav navigationItems={mobileSheetItems} pathname={pathname} />
                       <Link href={'/'} className='text-foreground font-poppins font-bold text-xl flex items-center cursor-pointer'>
                           <CarFront className='text-primary' />
                           <span className='ml-2'>
@@ -65,7 +66,7 @@ const Navbar = () => {
                       className="hidden md:flex items-center justify-center gap-4"
                   >
                       {
-                          NavItems.map((item, idx) => (
+                          navItems.map((item, idx) => (
                               item.children ? (
                                   
                                   <NavigationMenu   key={6}>
@@ -128,8 +129,9 @@ const Navbar = () => {
                                   <NotificationBadge/>
                               </Link>
                               <div className='hidden md:block'>
-                                  
-                              <UserButton/>
+                                  <UserButton 
+                                      userProfileUrl={userId ? `/user/${userId}` : undefined}
+                                  />
                               </div>
                               
                               

@@ -5,9 +5,11 @@ import { useUser, SignOutButton } from '@clerk/nextjs'
 import { SheetClose } from '../ui/sheet'
 import { Button } from '../ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { useCurrentUserId } from '@/hooks/useCurrentUserId'
 
 const UserMobileActions = () => {
     const { user, isSignedIn } = useUser()
+    const { userId } = useCurrentUserId()
     const imageUrl = user?.imageUrl
     const name = user?.fullName || user?.firstName || 'User'
     const initials = (user?.firstName?.[0] || '') + (user?.lastName?.[0] || '')
@@ -16,9 +18,9 @@ const UserMobileActions = () => {
         <>
             {isSignedIn ? (
                 <div className="flex items-center gap-3">
-                    {/* <SheetClose> */}
+                    <SheetClose asChild>
 
-                    <Link href={'/user'}>
+                    <Link href={userId ? `/user/${userId}` : '/profile'}>
                     <Avatar className="size-10">
                         {imageUrl ? (
                             <AvatarImage src={imageUrl} alt={name} />
@@ -27,7 +29,7 @@ const UserMobileActions = () => {
                         )}
                     </Avatar>
                         </Link>
-                        {/* </SheetClose> */}
+                        </SheetClose>
                     <SheetClose>
                         <SignOutButton redirectUrl="/sign-in">
                             <Button variant={'ghost'} className="text-red-500">
