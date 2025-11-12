@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, Sparkles } from 'lucide-react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Spinner } from '../ui/spinner';
@@ -16,6 +16,7 @@ const ChatDialog = () => {
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sending, setSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedQuestions = [
     "How does RidePlus work?",
@@ -145,6 +146,16 @@ const ChatDialog = () => {
     }
   };
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    if (isSheetOpen) {
+      scrollToBottom();
+    }
+  }, [messages, sending, isSheetOpen]);
+
   return (
     <>
       <div className="fixed bottom-14 md:bottom-20 right-4 z-50">
@@ -160,7 +171,7 @@ const ChatDialog = () => {
 
         {/* Small Popup with Suggestions */}
         {isOpen && !isSheetOpen && (
-          <div className=" rounded-lg shadow-2xl w-96 max-h-[500px] flex flex-col border ">
+          <div className=" rounded-lg shadow-xl animate-in slide-in-from-bottom-2 duration-200 w-80 md:w-96 max-h-[500px] flex flex-col  ">
             {/* Header */}
             <div className="bg-primary p-4 text-primary-foreground rounded-t-lg flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -180,7 +191,7 @@ const ChatDialog = () => {
             </div>
 
             {/* Suggestions Content */}
-            <div className="flex-1 rounded-lg space-y-4 bg-background p-4">
+            <div className="flex-1 rounded-b-lg space-y-4 bg-background p-4">
               
                 <div className="flex flex-wrap gap-2">
                   {suggestedQuestions.map((q, index) => (
@@ -202,13 +213,13 @@ const ChatDialog = () => {
                     onChange={(e) => setQuestion(e.target.value)}
                     onKeyPress={handleKeyPress}
                     placeholder="Enter your question"
-                    className=' shadow-none focus-visible:ring-0 bg-transparent'
+                    className=' shadow-none focus-visible:ring-0 bg-transparent h-10'
                   />
                 </div>
                 <Button
                   onClick={handleSend}
                   disabled={!question.trim() || sending}
-                  className='rounded-full h-12 w-12'
+                  className='rounded-full h-10 w-10'
                   size={"icon"}
                 >
                   <Send className="w-6 h-6" />
@@ -223,8 +234,8 @@ const ChatDialog = () => {
 
       {/* Full Screen Sheet for Chat */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-xl p-0 z-[999999]  flex flex-col">
-         <div className="border-b p-4 flex items-center justify-between">
+        <SheetContent side="right" className="w-full sm:max-w-xl p-0 z-[999999] border-none rounded-l-2xl shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out  translate-x-0">
+         <div className=" border-b border-muted/50 p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
               <h2 className="text-xl font-semibold">RidePlus AI</h2>
@@ -235,15 +246,15 @@ const ChatDialog = () => {
           </div>
 
           {/* Chat Messages */}
-          <div className="flex-1  overflow-y-auto p-4 space-y-4">
+          <div className="flex-1  overflow-y-auto p-4 space-y-6 ">
             {messages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex gap-2 ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={`flex gap-2 items-end ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.type === 'ai' && (
-                  <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-4 h-4 text-white" />
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 text-muted-foreground" />
                   </div>
                 )}
                 <div
@@ -254,9 +265,8 @@ const ChatDialog = () => {
                   }`}
                 >
                   {msg.type === 'ai' ? (
-                    <div className="prose prose-sm max-w-none prose-headings:mt-3 prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-a:text-orange-700 prose-a:underline">
-                      <ReactMarkdown >{msg.text}</ReactMarkdown>
-                    </div>
+                    <span >              <ReactMarkdown >{msg.text}</ReactMarkdown>
+                    </span>
                   ) : (
                     <span 
                     >{msg.text}</span>
@@ -273,20 +283,22 @@ const ChatDialog = () => {
             ))}
             {sending && (
               <div className="flex gap-2 justify-start">
-                <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                <div className="bg-gray-100 text-gray-800 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500">Ai is typing...</p>
+<div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                <div className=' border flex items-center gap-2 shadow-sm max-w-[90%] p-3 border-none rounded-none bg-muted/70 text-foreground rounded-r-[14px] rounded-tl-[14px] rounded-bl-none leading-relaxed  text-sm font-medium'>
+                  <span className="text-sm ">Ai is typing </span>
+                  <Spinner/>
                 </div>
               </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Area in Sheet */}
           <div className=" p-4 bg-muted/60 rounded-t-2xl shadow-2xl">
             <div className="flex items-end gap-2">
-            <div className="flex-1 flex items-center px-2  rounded-3xl border border-muted-foreground relative">
+            <div className="flex-1 flex items-center pl-2 gap-2 px-2 rounded-xl h-10 border border-muted-foreground relative">
             <Sparkles className='text-muted-foreground'/>
 
                 <Input
@@ -295,15 +307,15 @@ const ChatDialog = () => {
                   onChange={(e) => setQuestion(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Enter your question"
-                  className=' shadow-none focus-visible:ring-0 bg-transparent h-10'
+                  className=' shadow-none focus-visible:ring-0 h-full border-none p-0 bg-transparent '
                   />
               </div>
               <Button
                 onClick={handleSend}
                 disabled={!question.trim() || sending}
-                className='h-10'
+                className='h-10 '
               >
-                {sending ? <Spinner /> : <Send className="w-5 h-5" />}
+                {sending ? <Spinner className='size-8' /> : <Send className="size-8 " />}
               </Button>
             </div>
           </div>
