@@ -47,7 +47,7 @@ const Navbar = () => {
     ], [userId])
     
     return (
-        <header className='fixed top-0 left-0 right-0 z-[998] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
+        <header className='fixed top-0 left-0 right-0 z-[3] transition-all duration-300 bg-dark/80  shadow-md backdrop-blur-sm'>
             <div className='w-full container mx-auto sm:px-6 md:px-12 lg:px-24 xl:px-0 px-4'>
                 <div className='flex items-center h-16'>
                     <div className='flex-1 flex items-center gap-4'>

@@ -38,6 +38,10 @@ const ChatDialog = () => {
     setIsSheetOpen(true);
     // Automatically send the question
     handleSendWithQuestion(suggested);
+    const nextMessages: ChatMessage[] = [...messages, { type: 'user', text: suggested }];
+    setMessages(nextMessages);
+    setQuestion('');
+
   };
 
   const handleSendWithQuestion = async (q: string) => {
