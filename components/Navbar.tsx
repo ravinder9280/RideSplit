@@ -20,7 +20,6 @@ import { Avatar, AvatarFallback } from './ui/avatar'
 import { useCurrentUserId } from '@/hooks/useCurrentUserId'
 const navItems = [
     { label: "Home", href: "/" },
-    { label: "Ask AI", href: "/ai" },
     {
         label: "Rides",
         children: [

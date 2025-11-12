@@ -85,7 +85,7 @@ export function HomeCarousel() {
     // };
 
     return (
-        <div className="relative w-full max-w-7xl mx-auto lg:mt-6">
+        <div className="relative w-full max-w-5xl mx-auto lg:mt-6">
             <Carousel
                 setApi={setCarouselApi}
                 opts={{

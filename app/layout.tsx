@@ -7,6 +7,7 @@ import { dark } from '@clerk/themes'
 import { Toaster, } from 'sonner'
 import { ThemeProvider } from "@/components/theme-provider"
 import { Bot } from "lucide-react";
+import ChatDialog from "@/components/chat/chatDialog";
 
 const outfit = Outfit({
   subsets: ['latin'],
@@ -52,12 +53,7 @@ export default function RootLayout({
               {children}
               </main>        </>
         </ThemeProvider>
-        <div className="fixed bottom-16 md:bottom-20 right-4 z-40" >
-          <button  className="rounded-full bg-primary p-3 flex items-center text-black justify-center">
-            <Bot className="h-8 w-8"/>
-          </button>
-
-        </div>
+        <ChatDialog/>
       </body>
     </html>
     </ClerkProvider>
