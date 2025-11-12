@@ -103,7 +103,7 @@ const ChatDialog = () => {
     try {
       const payload = {
         messages: [
-          { role: 'system', content: 'You are Kanha AI, an assistant specializing in spiritual tourism in India.' },
+          { role: 'system', content: 'You are Ride Booking Expert u have been integrated as a chatbot for RidePlus platform its a ridesharing platform similar to blablacar assist user o different queries ur response should be in that format so the react-markdown library can handle it accordingly.' },
           ...nextMessages.map((m) =>
             m.type === 'user'
               ? { role: 'user' as const, content: m.text }
@@ -277,7 +277,7 @@ const ChatDialog = () => {
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <div className="bg-gray-100 text-gray-800 p-3 rounded-lg">
-                  <p className="text-sm text-gray-500">Kanha is typing...</p>
+                  <p className="text-sm text-gray-500">Ai is typing...</p>
                 </div>
               </div>
             )}
