@@ -26,8 +26,14 @@ export async function POST(req: NextRequest) {
     const { text } = await generateText({
       model: openrouter('openai/gpt-oss-20b:free'),
       messages: requestMessages,
+
+      
       
     });
+    if (!text || !text.trim()) {
+      return NextResponse.json({ error: 'Text Generation Error' }, { status: 502 });
+     
+    }
 
     return NextResponse.json({ text });
   } catch (err) {
