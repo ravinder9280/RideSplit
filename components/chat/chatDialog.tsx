@@ -8,7 +8,8 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Markdown } from './Markdown';
 import { toast } from 'sonner';
-
+import { useUser } from '@clerk/nextjs';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 type ChatMessage = { type: 'user' | 'ai'; text: string };
 
 const SYSTEM_PROMPT = `
@@ -87,6 +88,7 @@ const ChatDialog = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const {user}=useUser()
 
   const suggestedQuestions = [
     'How does RidePlus work?',
@@ -95,7 +97,6 @@ const ChatDialog = () => {
     'What are the fares for RidePlus?',
     'How do I contact RidePlus customer support?',
     'What payment options are available on RidePlus?',
-    'How can I cancel or modify my RidePlus booking?',
     'Are RidePlus rides safe for solo travelers?',
     'Does RidePlus provide ride history or receipts?',
   ];
@@ -245,6 +246,7 @@ const ChatDialog = () => {
                     onClick={() => handleSuggestedClick(q)}
                     className="inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none border text-xs bg-primary/10 border-primary/20 text-primary hover:bg-primary/5 rounded-full px-3 py-1 h-auto disabled:opacity-50"
                   >
+
                     {q}
                   </button>
                 ))}
@@ -279,7 +281,7 @@ const ChatDialog = () => {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent
           side="right"
-          className="w-full sm:max-w-xl p-0 z-[999999] border-none md:rounded-l-2xl shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out translate-x-0"
+          className="w-full gap-0 sm:max-w-xl p-0 z-[999999] border-none md:rounded-l-2xl shadow-2xl flex flex-col transform transition-transform duration-300 ease-in-out translate-x-0"
         >
           <div className="border-b border-muted/50 p-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -317,9 +319,9 @@ const ChatDialog = () => {
                       {/* AI bubble */}
                       <div
                         className="
-                          border shadow-sm max-w-[90%] p-3 border-none
-                          tracking-wide text-muted-foreground rounded-none
-                          bg-muted rounded-r-[14px] rounded-tl-[14px] rounded-bl-none
+                          border shadow-sm  p-3 border-none
+                          tracking-wide text-muted-foreground 
+                          bg-muted rounded-xl 
                           leading-relaxed text-sm font-medium
                         "
                       >
@@ -341,7 +343,7 @@ const ChatDialog = () => {
                       {/* User bubble */}
                       <div
                         className="
-                          border shadow-sm max-w-[90%] p-3 border-none rounded-none
+                          border shadow-sm max-w-[80%] p-3 border-none rounded-none
                           bg-primary text-primary-foreground rounded-l-[14px]
                           rounded-tr-[14px] rounded-br-none text-sm font-medium
                           ml-auto
@@ -352,17 +354,24 @@ const ChatDialog = () => {
 
                       {/* User avatar */}
                       <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
-                        <svg
-                          className="w-5 h-5 text-gray-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
+                       {user?<Avatar className="h-8 w-8 rounded-full " >
+
+                                <AvatarImage src={user?.imageUrl || undefined} />
+                                <AvatarFallback>{user?.fullName ?? "U"}</AvatarFallback>
+                        </Avatar>:
+
+                         <svg
+                         className="w-5 h-5 text-gray-600"
+                         fill="currentColor"
+                         viewBox="0 0 20 20"
+                         >
                           <path
                             fillRule="evenodd"
                             d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
                             clipRule="evenodd"
-                          />
+                            />
                         </svg>
+                          }
                       </div>
                     </>
                   )}
@@ -375,7 +384,7 @@ const ChatDialog = () => {
                 <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
                   <Sparkles className="w-4 h-4" />
                 </div>
-                <div className="border flex items-center gap-2  bg-muted text-muted-foreground shadow-sm max-w-[90%] p-3 border-none rounded-none text-foreground rounded-r-[14px] rounded-tl-[14px] rounded-bl-none leading-relaxed text-sm font-medium">
+                <div className="border flex items-center gap-2  bg-muted text-muted-foreground shadow-sm max-w-[90%] p-3 border-none rounded-none  rounded-r-[14px] rounded-tl-[14px] rounded-bl-none leading-relaxed text-sm font-medium">
                   <span className="relative">
                     Processing
                   </span>

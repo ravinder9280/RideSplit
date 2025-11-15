@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
       messages && messages.length
         ? messages
         : [{ role: 'user' as const, content: String(prompt ?? '') }];
+        console.log(messages)
 
     const { text } = await generateText({
       model: openrouter('openai/gpt-oss-20b:free'),

@@ -9,7 +9,7 @@ const isPublicRoute = createRouteMatcher([
     '/api/healthz(.*)',       // optional health check
     "/api/rides/search(.*)",     // <-- make search public
     "/api/cron/cleanup",     // <-- make search public
-    "api/rides/search"
+    "/api/chat"
 ]);
 
 const isOnboardingRoute = createRouteMatcher(['/onboarding(.*)']);

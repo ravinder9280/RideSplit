@@ -37,7 +37,7 @@ export const Markdown = ({ children }: { children: string }) => {
         // list items
         li: ({  ...props }) => <li className="text-sm" {...props} />,
         strong: ({  ...props }) => <strong className="pr-1" {...props} />,
-        code: ({ inline,  children, ...props }) => {
+        code: ({ inline,  children, ...props }:any) => {
           const code = String(children).replace(/\n$/, "");
         
           if (inline) {
